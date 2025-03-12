@@ -1,0 +1,63 @@
+Responsibilities: Davion Wireframes, Conrad Application description and development methodology, cadain github
+
+2 day heads up if someone is behind on project
+
+Responsive website that has public and private galleries. The website has a creation hub
+https://github.com/piskelapp/piskel/releases
+Hooks or web socket, or poll from database every second, You would have to 
+Postgres database
+Or paint online
+Websockets  will be used to 
+Aceternity ui
+Must use handlebars but can use any cs library 
+Use replit to create ideas. Replit is a open ai
+
+Stick with what was learned in class
+
+Make slack project
+
+Make wireframe diagram
+
+Team number: 011 - 7
+
+Team name: pixels
+
+Updating pixel art synchronously with a dumbed down UI (changing the color of a pixel) the page is stored on the database
+
+There are local canvases but they are only for non saved alterations. Which are subject to change by the shared canvas at all times.
+
+All art can be uploaded but shared canvases are under different constraints. Either group canvases are automatically uploaded after a certain time or the person who created the group canvas chooses the upload date of the canvas (subject to change).
+
+
+Team members:
+Caiden Gilbert
+Davion Miller
+Conrad Sadler
+John Tran
+Jingda Yu
+
+
+A short (2-3 paragraphs) overview description of the application. Provide enough information to explain what functionality and value your product will provide to users of your application. This should help you to define the scope of your project.
+
+
+A pixel art software where you can create a plain canvas which is automatically uploaded to the database which will track changes. Fundamentally, we want to have real time shared canvas, private gallery, public gallery, and a blank canvas that all allows users to click on pixels which will change the pixel color to the users desired color. 
+Then there will be a canvas upload button which will upload the canvas to the public gallery. We would have to create user sessions which allows users to join shared canvases by entering a code which redirects users to the shared canvas. The home page will contain a navbar which will have Home, gallery, login and an area to enter a code to join an exclusive canvas. When users are finished with their pixel art, they can hit submit and upload the art work to the global gallery. Inorder to ensure that multiple users can work in a synchronous manner, the website will have to poll from the database every second. This will be a large bottle neck in the user experience. If possible we would like to migrate to using hooks which will require a separate server. Another option would be using a web socket. Inorder to have the user select a color, we will have to have a color picker which allows the user to select a variety of colors.
+
+
+
+Audience: People who want to collaboratively color images.
+
+
+
+Vision Statement:
+To create a fun, collaborative workspace for artists all across the globe. 
+
+
+Meeting Plan: No regularly scheduled meetings. If a team member falls behind or has problems, they will give the other team members at minimum 2 days notice and the team will decide on a meeting date to help them.
+Meeting Time: Decided on a case by case basis.
+The team has agreed to meet with the TA every Friday from 5:15 PM to 5:30 PM.
+Meeting Modality:
+The meeting will be held on zoom (https://cuboulder.zoom.us/j/91432440899)
+Communication Plan: Our primary mode of communication is through Slack. In case we cannot get to each other via Slack, we also have a text group chat.
+
+
