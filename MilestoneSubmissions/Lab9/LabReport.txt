@@ -8,6 +8,7 @@ Davion Miller
 Conrad Sadler
 John Tran
 Jingda Yu
+
 Application name: pixels
 
 Application Description:
@@ -18,11 +19,11 @@ Application Description:
 
 Audience:
 
-People who want to collaboratively color images through pixels online.
+People who want to collaboratively and individually create pixel art online.
 
 Vision Statement: 
 
-To create a fun, collaborative workspace for artists all across the globe.
+To create a fun, collaborative workspace for artists all across the globe to create pixel art together and individually. 
 
 Development Methodology: 
 
