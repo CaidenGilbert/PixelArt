@@ -62,7 +62,7 @@ Friday at 5:15pm. Other than that on a case by case basis. The team has agreed t
 
 ## Use Case Diagram:
 
-### Picture On Google Docs.
+### Picture On Google Docs
 Key Features (Use Cases)
 Create Pixel Art Canvas – Users can start a new blank canvas for creating pixel art.
 Real-Time Collaborative Drawing – Users can draw together on the same canvas simultaneously, with changes updating in real time for all collaborators.
