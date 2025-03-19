@@ -1,4 +1,5 @@
-##All the details are in this Google Docs
+## All the details are in this Google Docs
+
 [![Link To Google Docs Page](https://img.shields.io/badge/Google%20Docs-blue)](https://docs.google.com/document/d/1U56IUHf5iMVGheEPgsrtYkErD1g7QbTb--wQP84golg/edit?usp=sharing)
 
 ## Team number: 
