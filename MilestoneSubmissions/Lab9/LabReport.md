@@ -68,5 +68,3 @@ Join Shared Canvas via Code – Users can enter a shared session code to join an
 Select Colors (Color Picker Tool) – Users have access to a color selection tool to choose drawing colors for their pixels.
 Save and Upload Artwork – Users can save their artwork (e.g. locally or to their account) and upload finished pieces to the application’s gallery.
 Private and Public Gallery – The app provides a Private Gallery for each user to store and view their own artworks, and a Public Gallery where users can browse all publicly shared pixel art pieces.
-
-Wireframes:
