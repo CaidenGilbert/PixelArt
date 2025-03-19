@@ -1,4 +1,4 @@
-[![Link To Google Docs Page]](https://docs.google.com/document/d/1U56IUHf5iMVGheEPgsrtYkErD1g7QbTb--wQP84golg/edit?usp=sharing)
+[![Link To Google Docs Page](https://p7.hiclipart.com/preview/349/277/110/google-docs-g-suite-document-google-drive-menu-button.jpg)](https://docs.google.com/document/d/1U56IUHf5iMVGheEPgsrtYkErD1g7QbTb--wQP84golg/edit?usp=sharing)
 
 Team number: 011 - 7
 
