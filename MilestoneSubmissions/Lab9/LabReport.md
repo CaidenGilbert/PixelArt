@@ -1,8 +1,12 @@
 [![Link To Google Docs Page](https://img.shields.io/badge/Google%20Docs-blue)](https://docs.google.com/document/d/1U56IUHf5iMVGheEPgsrtYkErD1g7QbTb--wQP84golg/edit?usp=sharing)
 
-## Team number: 011 - 7
+## Team number: 
 
-## Team name: Jackson 5
+011 - 7
+
+## Team name: 
+
+Jackson 5
 
 ## Team members:
 
@@ -12,7 +16,9 @@ Conrad Sadler
 John Tran
 Jingda Yu
 
-## Application name: pixels
+## Application name: 
+
+pixels
 
 ## Application Description:
 
