@@ -1,10 +1,10 @@
 [![Link To Google Docs Page](https://img.shields.io/badge/Google%20Docs-blue)](https://docs.google.com/document/d/1U56IUHf5iMVGheEPgsrtYkErD1g7QbTb--wQP84golg/edit?usp=sharing)
 
-##Team number: 011 - 7
+## Team number: 011 - 7
 
-##Team name: Jackson 5
+## Team name: Jackson 5
 
-##Team members:
+## Team members:
 
 Caiden Gilbert
 Davion Miller
@@ -12,9 +12,9 @@ Conrad Sadler
 John Tran
 Jingda Yu
 
-##Application name: pixels
+## Application name: pixels
 
-##Application Description:
+## Application Description:
 
   A pixel art software where you can create a plain canvas that is automatically uploaded to the database and will track changes. Fundamentally, we want to have a real-time shared canvas, private gallery, public gallery, and a blank canvas that allows users to change the pixel's color to the user's desired color. These functionalities will allow users to collaboratively color together and create pixel artwork that can be displayed to the public.
   
@@ -22,19 +22,19 @@ Jingda Yu
   
   In order to ensure that multiple users can work in a synchronous manner, the website will have to poll from the database every second. This will be a large bottleneck in the user experience. If possible we would like to migrate to using web sockets. This migration would help to improve the user experience. Lastly, in order to let users color pixels, we must build a way for the user to select a color. In order to solve this problem, we will have to have a color picker that allows the user to select a variety of colors.
 
-##Audience:
+## Audience:
 
 People who want to collaboratively and individually create pixel art online.
 
-##Vision Statement: 
+## Vision Statement: 
 
 To create a fun, collaborative workspace for artists all across the globe to create pixel art together and individually. 
 
-##Development Methodology: 
+## Development Methodology: 
 
 We will use a hybrid Agile development methodology. Our methodology will focus on breaking a big problem into lots of smaller problems that can be solved in a faster manner(I.E. Sprints), which can improve the feedback cycle between group members. More importantly, we will promote individuals and interactions between team members. In addition, working software is prioritized over comprehensive documentation. Lastly, we will prioritize responding to change over following a set-in-stone plan. We are also going to focus on writing good code with function commenting, and we are also going to focus on the minimum viable product.
 
-##User Epics and Stories:
+## User Epics and Stories:
 
 User epic: As an Artist, I would like to have a personal account where I can store my creations.
   User story: As an Artist, I would like my account to be secure with a password. This will prevent other people from changing my artwork.
@@ -48,21 +48,21 @@ User epic: As an artist, I want to share my completed pieces of artwork with eve
 User epic: As an artist, I want to be able to store my artwork privately if it is a work in progress or a private creation. This will allow me to access all of my artwork and continue working on it.
   User story: As an Artist, I would like to have a separate page where I can view all the artwork I have created. This will allow me to make artwork that I don’t want everyone to     see.
 
-##Communication Plan: 
+## Communication Plan: 
 
 Our primary mode of communication is through Slack. In case we cannot get to each other via Slack, we also have a text group chat.
 
-##Meeting Plan: 
+## Meeting Plan: 
 
 Meet every Friday with the TA. If a team member falls behind or has problems, they will give the other team members at minimum 2 days notice and the team will decide on a meeting date to help them.
 
-##Meeting Time: 
+## Meeting Time: 
 
 Friday at 5:15pm. Other than that on a case by case basis. The team has agreed to meet with the TA every Friday from 5:15 PM to 5:30 PM. The meeting will be held on zoom (https://cuboulder.zoom.us/j/91432440899)
 
-##Use Case Diagram:
+## Use Case Diagram:
 
-###Picture On Google Docs.
+### Picture On Google Docs.
 Key Features (Use Cases)
 Create Pixel Art Canvas – Users can start a new blank canvas for creating pixel art.
 Real-Time Collaborative Drawing – Users can draw together on the same canvas simultaneously, with changes updating in real time for all collaborators.
@@ -71,6 +71,6 @@ Select Colors (Color Picker Tool) – Users have access to a color selection too
 Save and Upload Artwork – Users can save their artwork (e.g. locally or to their account) and upload finished pieces to the application’s gallery.
 Private and Public Gallery – The app provides a Private Gallery for each user to store and view their own artworks, and a Public Gallery where users can browse all publicly shared pixel art pieces.
 
-##Wireframes:
+## Wireframes:
 
-###On Google Docs
+### On Google Docs
