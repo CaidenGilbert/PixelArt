@@ -44,16 +44,25 @@ We will use a hybrid Agile development methodology as opposed to a waterfall met
 
 ## User Epics and Stories:
 
-User epic: As an Artist, I would like to have a personal account where I can store my creations.
+#### User epic: As an Artist, I would like to have a personal account where I can store my creations.
+
   - User story: As an Artist, I would like my account to be secure with a password. This will prevent other people from changing my artwork.
   - User story: As an Artist, I would like to select my username. This username will be what people identify my by in the global gallery and when I am working with friends.
-User epic: As an Artist, I want the ability to collaborate with other artists on a single piece of artwork in real time. This will allow me to add my artistic edge to my friends  canvas.
+
+#### User epic: As an Artist, I want the ability to collaborate with other artists on a single piece of artwork in real time. This will allow me to add my artistic edge to my friends  canvas.
+
   - User story: As an Artist, I would like to create a canvas and share it only with my friends by having a pass key. This will give us the ability to create artwork without having     to worry about other people changing our artwork.
-User epic: As an Artist, I want the ability to color a pixel whatever color I want. This will allow me to create unique and colorful artwork.
+
+#### User epic: As an Artist, I want the ability to color a pixel whatever color I want. This will allow me to create unique and colorful artwork.
+
   - User story: As an Artist, I want the ability to select the color I want by clicking on a color pallet. This will allow me to easily switch between colors.
-User epic: As an artist, I want to share my completed pieces of artwork with everyone else. This will allow others to gain inspiration from my artwork and this will allow me to gain notoriety.
+
+#### User epic: As an artist, I want to share my completed pieces of artwork with everyone else. This will allow others to gain inspiration from my artwork and this will allow me to gain notoriety.
+
   - User story: As an Artist, I want a button that I can hit to publish my artwork globally. This will let me showcase my artwork to my friends and family.
-User epic: As an artist, I want to be able to store my artwork privately if it is a work in progress or a private creation. This will allow me to access all of my artwork and continue working on it.
+
+#### User epic: As an artist, I want to be able to store my artwork privately if it is a work in progress or a private creation. This will allow me to access all of my artwork and continue working on it.
+
   - User story: As an Artist, I would like to have a separate page where I can view all the artwork I have created. This will allow me to make artwork that I don’t want everyone to     see.
 
 ## Communication Plan: 
