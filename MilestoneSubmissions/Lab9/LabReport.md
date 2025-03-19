@@ -47,7 +47,7 @@ User epic: As an artist, I want to share my completed pieces of artwork with eve
 User epic: As an artist, I want to be able to store my artwork privately if it is a work in progress or a private creation. This will allow me to access all of my artwork and continue working on it.
   User story: As an Artist, I would like to have a separate page where I can view all the artwork I have created. This will allow me to make artwork that I don’t want everyone to     see.
 
-Communication Plan: 
+Communication Plan : 
 
 Our primary mode of communication is through Slack. In case we cannot get to each other via Slack, we also have a text group chat.
 
