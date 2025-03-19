@@ -22,6 +22,16 @@ Jingda Yu
 
 pixels
 
+## Application MVP:
+- A login page
+- A registration page
+- A home page
+- A server that allows the UI to communicate with the database
+- A database that stores user information
+- Passwords must be hashed and stored in the database
+- Session Management - The user must be able to log in and out of the application and the session must be maintained
+- Application is built within Docker containers - you can find some updates to the docker-compose.yaml in the write-up below.
+
 ## Application Description:
 
   A pixel art software where you can create a plain canvas that is automatically uploaded to the database and will track changes. Fundamentally, we want to have a real-time shared canvas, private gallery, public gallery, and a blank canvas that allows users to change the pixel's color to the user's desired color. These functionalities will allow users to collaboratively color together and create pixel artwork that can be displayed to the public.
@@ -67,11 +77,11 @@ We will use a hybrid Agile development methodology as opposed to a waterfall met
 
 ## Communication Plan: 
 
-Our primary mode of communication is through Slack. In case we cannot get to each other via Slack, we also have a text group chat.
+Our primary mode of communication is through Slack. In case we cannot get to each other via Slack, we also have a text group chat. We will have a hard deadline for Monday at midnight. If you work on it after you need to update the group via Slack of what is being worked on and what will be completed.
 
 ## Meeting Plan: 
 
-Meet every Friday with the TA. If a team member falls behind or has problems, they will give the other team members at minimum 2 days notice and the team will decide on a meeting date to help them.
+Meet every Friday with the TA and 15 minutes after the meeting with the TA for our group. If a team member falls behind or has problems, they will give the other team members at minimum 3 days notice and the team will decide on a meeting date to help them.
 
 ## Meeting Time: 
 
