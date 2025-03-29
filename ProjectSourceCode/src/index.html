@@ -22,30 +22,22 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+      // this initializes the websocket
       var socket = io();
 
-      var form = document.getElementById('form');
       let roomForm = document.getElementById('roomForm');
-      var input = document.getElementById('input');
 
+      //this event listener will listen for any submit events. Then when an even happens it will get values from input feilds 
       roomForm.addEventListener('submit', function(e) {
       e.preventDefault();
       if(roomInput.value)
           {
-              console.log("in");
               socket.emit('room num', roomInput.value, roomMessage.value);
               roomInput.value = '';
+              roomMessage.value = '';
           }
       });
-
-      form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (input.value) {
-          socket.emit('chat message', input.value);
-          input.value = '';
-      }
-      });
-
+      //this will take broadcasted information from the websocket server and apply it to the applicable websockets
       socket.on('chat message', function(contents) {
       for(const msg of contents)
       {

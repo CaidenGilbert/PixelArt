@@ -8,28 +8,28 @@ let rooms = new Map();
 let socketsToRooms = new Map();
 const io = new Server(server);
 
+//This is the homepage and only page for this MVP
 app.get('/', (req,res) => {
     res.sendFile(__dirname + '/index.html');
-
 });
-
+//This server side code will proccess the transmitted information from the client side and then broadcast the information out to the appropriate websockets
 io.on('connection', (socket) => {
     socket.on('room num', (sockId, msg) => {
         console.log("here");
         console.log("directed to " + sockId);
         console.log("User id: "+ socket.id);
         console.log("message: "+ msg);
-        if(!socketsToRooms.has(sockId)) // new room
+        if(!socketsToRooms.has(sockId)) //new room
         {
             socket.rooms.clear();
-            socket.join(sockId);
-            socketsToRooms.set(sockId, [socket.id]);
-            rooms.set(sockId,[msg]);
+            socket.join(sockId);  //joining new room
+            socketsToRooms.set(sockId, [socket.id]);  //adding socket to room record
+            rooms.set(sockId,[msg]); // adding message to message log
             console.log(rooms.get(sockId));
-            io.to(sockId).emit("chat message", rooms.get(sockId));
+            io.to(sockId).emit("chat message", rooms.get(sockId));  //boradcasting the massage to all websockets in room
         }
         else
-        {
+        {   //This loop is going to check to see if websocket is in room
             let inList = false;
             for(const x of socketsToRooms.get(sockId))
             {
@@ -43,16 +43,14 @@ io.on('connection', (socket) => {
             if(!inList)
             {
                 socket.rooms.clear();
-                console.log(socketsToRooms.get(sockId));
-                console.log("here comes to tricky part "+ rooms.get(sockId));
-                socket.join(sockId);
-                io.to(socket.id).emit("chat message", rooms.get(sockId));
-                socketsToRooms.get(sockId).push(socket.id);
+                socket.join(sockId);  //adding websocket to room
+                io.to(socket.id).emit("chat message", rooms.get(sockId));  //getting newly added websocket up to speed by 'pushing' the rooms record to it
+                socketsToRooms.get(sockId).push(socket.id);  //adding websocket to room record
             }
             else
             {
-                rooms.get(sockId).push(msg);
-                io.to(sockId).emit("chat message", [msg]);
+                rooms.get(sockId).push(msg);  //adding message to record
+                io.to(sockId).emit("chat message", [msg]);  //broadcasting message to everyone in room
             }
         }
         
