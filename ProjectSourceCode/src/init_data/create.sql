@@ -1,1 +1,0 @@
-CREATE TABLE users(username VARCHAR(50) Primary Key, password VARCHAR(60) Not NUll)
