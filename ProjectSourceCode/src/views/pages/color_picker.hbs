@@ -1,8 +1,4 @@
-<label for="hue">Hue</label>
-<input id="hue_slider" type="range" value="{{current_color}}" min="0" max="360" name="hue">
+<canvas id="color_preview" width="200px" height="200px"></canvas>
 <br>
-<canvas id="color_picker" width="200px" height="200px"></canvas>
-
-<script type="module">
-  {{{script}}}
-</script>
+<canvas id="hue_slider" width="200px" height="20px"></canvas>
+<script type="module" src="/static/color_picker.js"></script>
