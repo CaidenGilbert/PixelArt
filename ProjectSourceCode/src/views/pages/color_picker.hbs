@@ -1,11 +1,8 @@
-<form action="/changeHue" method="POST">
-  <label for="hue">Hue</label>
-  <input type="number" min="0" max="360" name="hue">
-  <button type="submit">Change Hue</button>
-</form>
+<label for="hue">Hue</label>
+<input id="hue_slider" type="range" value="{{current_color}}" min="0" max="360" name="hue">
 <br>
 <canvas id="color_picker" width="200px" height="200px"></canvas>
 
-<script>
+<script type="module">
   {{{script}}}
 </script>

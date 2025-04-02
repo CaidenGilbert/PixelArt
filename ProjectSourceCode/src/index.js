@@ -4,7 +4,7 @@ const handlebars = require('express-handlebars');
 const Handlebars = require('handlebars');
 const path = require('path');
 const bodyParser = require('body-parser');
-const color_utils = require('./color_utils.js');
+const color_utils = require('./public/color_utils.js');
 
 const hbs = handlebars.create({
   extname: 'hbs',
@@ -23,25 +23,27 @@ app.use(
   })
 );
 
-app.use(express.static('public'));
-
-let color = {r: 0, g: 0, b: 0, a: 1};
+app.use('/static', express.static( path.join(__dirname, 'public') ));
 
 app.get('/', (req, res) => {
   res.render('pages/color_picker.hbs', {
     script: `
+      import { hsvToRGB } from "/static/color_utils.js";
       let canvas = document.getElementById("color_picker");
       let context = canvas.getContext("2d");
 
-      context.fillStyle = "rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})";
-      context.fillRect(0, 0, 200, 200);
+      let hue_slider = document.getElementById("hue_slider");
+      hue_slider.addEventListener('change', changeHue);
+      changeHue.call(hue_slider); 
+
+      function changeHue(self) {
+        let color = {r: 0, g: 0, b: 0};
+        [color.r, color.g, color.b] = hsvToRGB(this.value, 1, 1);
+        context.fillStyle = \`rgba(\${color.r}, \${color.g}, \${color.b})\`;
+        context.fillRect(0, 0, 200, 200);
+      }
     `,
   });
-});
-
-app.post('/changeHue', (req, res) => {
-  [ color.r, color.g, color.b ] = color_utils.hsvToRGB(req.body.hue, 1, 1);
-  res.redirect('/');
 });
 
 app.listen(3000);
