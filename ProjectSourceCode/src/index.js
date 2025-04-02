@@ -1,78 +1,48 @@
-const express = require('express');
+const express = require('express'); // To build an application server or API
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
-//initialize a new instance of socket.io by passing the server object
-const { Server } = require("socket.io");
-let rooms = new Map();
-let socketsToRooms = new Map();
-const io = new Server(server);
+const handlebars = require('express-handlebars');
+const Handlebars = require('handlebars');
+const path = require('path');
+const bodyParser = require('body-parser');
+const color_utils = require('./color_utils.js');
 
-//This is the homepage and only page for this MVP
-app.get('/', (req,res) => {
-    res.sendFile(__dirname + '/index.html');
+const hbs = handlebars.create({
+  extname: 'hbs',
+  layoutsDir: `${__dirname}/views/layouts`,
+  partialsDir: `${__dirname}/views/partials`,
 });
-//This server side code will proccess the transmitted information from the client side and then broadcast the information out to the appropriate websockets
-io.on('connection', (socket) => {
-    socket.on('room num', (sockId, msg) => {
-        console.log("here");
-        console.log("directed to " + sockId);
-        console.log("User id: "+ socket.id);
-        console.log("message: "+ msg);
-        if(!socketsToRooms.has(sockId)) //new room
-        {
-            socket.rooms.clear();
-            socket.join(sockId);  //joining new room
-            socketsToRooms.set(sockId, [socket.id]);  //adding socket to room record
-            rooms.set(sockId,[msg]); // adding message to message log
-            console.log(rooms.get(sockId));
-            io.to(sockId).emit("chat message", rooms.get(sockId));  //boradcasting the massage to all websockets in room
-        }
-        else
-        {   //This loop is going to check to see if websocket is in room
-            let inList = false;
-            for(const x of socketsToRooms.get(sockId))
-            {
-                if(x == socket.id)
-                {
-                    inList = true;
-                    break;
-                }
-            }
-            
-            if(!inList)
-            {
-                socket.rooms.clear();
-                socket.join(sockId);  //adding websocket to room
-                io.to(socket.id).emit("chat message", rooms.get(sockId));  //getting newly added websocket up to speed by 'pushing' the rooms record to it
-                socketsToRooms.get(sockId).push(socket.id);  //adding websocket to room record
-            }
-            else
-            {
-                rooms.get(sockId).push(msg);  //adding message to record
-                io.to(sockId).emit("chat message", [msg]);  //broadcasting message to everyone in room
-            }
-        }
-        
-        
-    });
-});
-// listen on the connect even for incoming sockers and log it to the console
-io.on('connection', (socket) => {
-    socket.on('chat message', (msg) => {
-        console.log("message: "+ msg);
-        io.emit('chat message', [msg]);
-    });
+
+app.engine('hbs', hbs.engine);
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
+
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+
+app.use(express.static('public'));
+
+let color = {r: 0, g: 0, b: 0, a: 1};
+
+app.get('/', (req, res) => {
+  res.render('pages/color_picker.hbs', {
+    script: `
+      let canvas = document.getElementById("color_picker");
+      let context = canvas.getContext("2d");
+
+      context.fillStyle = "rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})";
+      context.fillRect(0, 0, 200, 200);
+    `,
   });
-
-io.on('connection', (socket) => {
-    console.log('User connected');
-
-    socket.on('disconnect',() =>{
-        console.log('User disconnected');
-    });
 });
 
-server.listen(3000, () => {
-    console.log("listening on *:3000");
+app.post('/changeHue', (req, res) => {
+  [ color.r, color.g, color.b ] = color_utils.hsvToRGB(req.body.hue, 1, 1);
+  res.redirect('/');
 });
+
+app.listen(3000);
+console.log('Server is listening on port 3000');
