@@ -109,11 +109,13 @@ app.post("/login", async(req, res) =>
 {
 console.log("In post login")
 const query = "select password from users where username= '"+req.body.username+"';";
-console.log(query);
+const hash = await bcrypt.hash(req.body.password, 10);
+console.log(hash);
 try
 {
     const results = await db.any(query);
     const match = await bcrypt.compare(req.body.password, results[0].password);
+    
     if(match == true)
     {
     user.password = req.body.password;
@@ -121,10 +123,13 @@ try
     req.session.user = user;
     req.session.save();
     res.redirect("/homeCanvas");
+    res.status(200).send("Success");
+
     }
     else
     {
     res.render("./pages/login",{message:"Incorrect username or password"});
+    res.status(302).send("Incorrect username or password");
     }
 }
 catch(err)
@@ -142,14 +147,24 @@ app.get("/register", (req, res) =>
 app.post("/register", async (req,res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
   const query = "Insert into users (username,password) values ( '"+req.body.username+"','"+hash+"' );"
-  try
+  let testUsername = req.body.username.replace(/\s/g,"");
+  if(testUsername.length != 0)
   {
-    const results = await db.any(query);
-    res.redirect("./pages/login");
+    try
+    {
+      const results = await db.any(query);
+      res.redirect("./pages/login");
+      res.status(200).send("Success");
+    }
+    catch(err)
+    {
+      res.redirect("./pages/register");
+      res.status(400).send('Invalid input');
+    }
   }
-  catch(err)
+  else
   {
-    res.redirect("./pages/register");
+    res.status(400).send('Invalid input');
   }
 })
 
@@ -182,6 +197,13 @@ app.post("/canvas", async(req, res) =>
         }
     
     });
+// *****************************************************
+// <!-- LAB 11 -->
+// *****************************************************
+
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
 
 // *****************************************************
 // <!-- Authentication middleware. -->
@@ -286,7 +308,7 @@ io.on('connection', (socket) => {
     console.log('User connected');
     
 });
-
+module.exports = app.listen(3001);
 server.listen(3000, () => {
   console.log("listening on *:3000");
 });
