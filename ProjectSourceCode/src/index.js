@@ -110,7 +110,6 @@ app.post("/login", async(req, res) =>
 console.log("In post login")
 const query = "select password from users where username= '"+req.body.username+"';";
 const hash = await bcrypt.hash(req.body.password, 10);
-console.log(hash);
 try
 {
     const results = await db.any(query);
@@ -123,13 +122,14 @@ try
     req.session.user = user;
     req.session.save();
     res.redirect("/homeCanvas");
-    res.status(200).send("Success");
+
+    //res.status(200).send("Success");
 
     }
     else
     {
+    //res.status(302).send("Incorrect username or password");
     res.render("./pages/login",{message:"Incorrect username or password"});
-    res.status(302).send("Incorrect username or password");
     }
 }
 catch(err)
@@ -154,12 +154,14 @@ app.post("/register", async (req,res) => {
     {
       const results = await db.any(query);
       res.redirect("./pages/login");
-      res.status(200).send("Success");
+
+      //res.status(200).send("Success");
     }
     catch(err)
     {
       res.redirect("./pages/register");
-      res.status(400).send('Invalid input');
+      
+      //res.status(400).send('Invalid input');
     }
   }
   else
@@ -171,7 +173,7 @@ app.post("/register", async (req,res) => {
 app.get('/logout', (req, res) => {
     const saveUsername = user.username;
     req.session.destroy(function(err) {
-        res.render('./pages/logout',{message: "See you next time, "+saveUsername});
+        res.render('./pages/logout');
     });
     });
     
