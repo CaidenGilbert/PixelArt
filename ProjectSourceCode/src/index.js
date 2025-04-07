@@ -310,7 +310,7 @@ io.on('connection', (socket) => {
     console.log('User connected');
     
 });
-module.exports = app.listen(3001);
-server.listen(3000, () => {
+
+module.exports = server.listen(3000, () => {
   console.log("listening on *:3000");
 });
