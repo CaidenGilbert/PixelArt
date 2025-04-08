@@ -41,8 +41,8 @@ describe('Testing Add User API', () => {
         .post('/register')
         .send({username: 'John Doe', password: 'password'})
         .end((err, res) => {
-            expect(res).to.have.status(200);
-            expect(res.body.message).to.equals('Success');
+          res.should.have.status(200);
+          res.should.redirectTo(/^.*127\.0\.0\.1.*\/login$/);
             done();
           });
     })
@@ -60,8 +60,7 @@ describe('Testing Add User API', () => {
         .post('/register')
         .send({username: ' ', password: 'password'})
         .end((err, res) => {
-          expect(res).to.have.status(400);
-          expect(res.body.message).to.equals('Invalid input');
+          res.should.have.status(400);
           done();
         });
     });
@@ -70,38 +69,38 @@ describe('Testing Add User API', () => {
 
 
 // *********************** UNIT TEST CASE FOR Login **************************
-
 describe('Testing Login', () => {
-    it('positive: /login checking for successful login', done => {
-        chai
-        .request(server)
-        .post('/login')
-        .send({username: 'admin', password: 'admin'})
-        .end((err, res) => {
-            expect(res).to.have.status(200);
-            expect(res.body.message).to.equals('Success');
-            done();
-          });
-    })
-  
-    // Example Negative Testcase :
-    // API: /add_user
-    // Input: {id: 5, name: 10, dob: '2020-02-20'}
-    // Expect: res.status == 400 and res.body.message == 'Invalid input'
-    // Result: This test case should pass and return a status 400 along with a "Invalid input" message.
-    // Explanation: The testcase will call the /add_user API with the following invalid inputs
-    // and expects the API to return a status of 400 along with the "Invalid input" message.
-    it('Negative : /login. Checking for valid username but invalid password', done => {
+  it('positive: /login checking for successful login', done => {
       chai
-        .request(server)
-        .post('/login')
-        .send({username: 'admin', password: 'password'})
-        .end((err, res) => {
-          expect(res).to.have.status(302);
-          expect(res.body.message).to.equals('Incorrect username or password');
+      .request(server)
+      .post('/login')
+      .send({username: 'admin', password: 'admin'})
+      .end((err, res) => {
+          res.should.have.status(200);
+          res.should.redirectTo(/^.*127\.0\.0\.1.*\/homeCanvas$/);
+
           done();
         });
-    });
+  })
+
+  // Example Negative Testcase :
+  // API: /add_user
+  // Input: {id: 5, name: 10, dob: '2020-02-20'}
+  // Expect: res.status == 400 and res.body.message == 'Invalid input'
+  // Result: This test case should pass and return a status 400 along with a "Invalid input" message.
+  // Explanation: The testcase will call the /add_user API with the following invalid inputs
+  // and expects the API to return a status of 400 along with the "Invalid input" message.
+  it('Negative : /login. Checking for valid username but invalid password', done => {
+    chai
+      .request(server)
+      .post('/login')
+      .send({username: 'admin', password: 'password'})
+      .end((err, res) => {
+        res.should.have.status(400);
+        done();
+      });
+  });
 });
+
 
 // ********************************************************************************

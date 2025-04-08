@@ -123,13 +123,11 @@ try
     req.session.save();
     res.redirect("/homeCanvas");
 
-    //res.status(200).send("Success");
-
     }
     else
     {
-    //res.status(302).send("Incorrect username or password");
-    res.render("./pages/login",{message:"Incorrect username or password"});
+    
+    res.status(400).render("./pages/login",{message:"Incorrect username or password"});
     }
 }
 catch(err)
@@ -148,26 +146,23 @@ app.post("/register", async (req,res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
   const query = "Insert into users (username,password) values ( '"+req.body.username+"','"+hash+"' );"
   let testUsername = req.body.username.replace(/\s/g,"");
-  if(testUsername.length != 0)
+  try
   {
-    try
+    if(testUsername.length != 0)
     {
-      const results = await db.any(query);
-      res.redirect("./pages/login");
+        db.any(query);
+        res.redirect("./pages/login");
+    }
+    else
+    {
+      res.status(400).render("./pages/register");
+    }
+  }
+  catch(err)
+  {
+    res.status(400).render("./pages/register");
+  }
 
-      //res.status(200).send("Success");
-    }
-    catch(err)
-    {
-      res.redirect("./pages/register");
-      
-      //res.status(400).send('Invalid input');
-    }
-  }
-  else
-  {
-    res.status(400).send('Invalid input');
-  }
 })
 
 app.get('/logout', (req, res) => {
