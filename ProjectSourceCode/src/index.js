@@ -109,7 +109,6 @@ app.post("/login", async(req, res) =>
 {
 console.log("In post login")
 const query = "select password from users where username= '"+req.body.username+"';";
-const hash = await bcrypt.hash(req.body.password, 10);
 try
 {
     const results = await db.any(query);
@@ -168,7 +167,7 @@ app.post("/register", async (req,res) => {
 app.get('/logout', (req, res) => {
     const saveUsername = user.username;
     req.session.destroy(function(err) {
-        res.render('./pages/logout');
+        res.render('./pages/logout',{username: saveUsername});
     });
     });
     
