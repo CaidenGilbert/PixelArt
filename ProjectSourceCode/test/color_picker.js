@@ -1,7 +1,7 @@
 const server = require('../src/index.js');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const color_utils = require('../src/public/color_utils.js');
+const color_utils = require('../src/public/js/color_utils.js');
 
 chai.should();
 chai.use(chaiHttp);
