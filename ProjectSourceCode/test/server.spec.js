@@ -1,6 +1,8 @@
 // ********************** Initialize server **********************************
 
+
 const server = require('../src/index.js'); //TODO: Make sure the path to your index.js is correctly added
+
 
 // ********************** Import Libraries ***********************************
 
@@ -15,6 +17,7 @@ const {assert, expect} = chai;
 describe('Server!', () => {
   // Sample test case given to test / endpoint.
   it('Returns the default welcome message', done => {
+
     console.log("IN UNIT TEST ***************");
     chai
       .request(server)
@@ -27,6 +30,7 @@ describe('Server!', () => {
       });
   });
 });
+
 
 // *********************** TODO: WRITE 2 UNIT TEST CASES **************************
 describe('Testing Add User API', () => {
@@ -101,6 +105,5 @@ describe('Testing Login', () => {
       });
   });
 });
-
 
 // ********************************************************************************

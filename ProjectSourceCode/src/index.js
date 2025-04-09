@@ -78,6 +78,8 @@ app.use(
   })
 );
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get("/",(req,res) => 
 {
   if(req.session.user)
@@ -103,6 +105,36 @@ app.get("/login", (req, res) =>
   {
     res.render("./pages/login",{});
   }
+});
+
+app.get('/pixel-art', (req, res) => {
+  console.log('Pixel art route accessed!');
+  const canvasRows = [];
+  const canvasWidth = 32;
+  const canvasHeight = 32;
+  
+  for (let i = 0; i < canvasHeight; i++) {
+      const row = [];
+      for (let j = 0; j < canvasWidth; j++) {
+          row.push({});
+      }
+      canvasRows.push(row);
+  }
+  
+  // Change this line to match your folder structure
+  res.render('./pages/pixel-art', {
+      title: 'Pixel Art Creator',
+      canvasRows: canvasRows
+  });
+});
+
+app.get('/test-login', (req, res) => {
+  // Create a test user session
+  req.session.user = {
+    username: "admin",
+    password: "admin"
+  };
+  res.redirect('/pixel-art');  // Redirect to pixel art page after "logging in"
 });
 
 app.post("/login", async(req, res) => 
