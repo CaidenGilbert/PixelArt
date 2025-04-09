@@ -164,35 +164,36 @@ app.post("/register", async (req,res) => {
 
 })
 
+app.get('/color_picker', (req, res) => {
+    res.render('./pages/color_picker.hbs');
+});
+
 app.get('/logout', (req, res) => {
     const saveUsername = user.username;
     req.session.destroy(function(err) {
         res.render('./pages/logout',{username: saveUsername});
     });
-    });
+});
     
 //add variable to save last room
 
-app.post("/canvas", async(req, res) => 
-    {
-        console.log("---------------------------------------------------");
-        let inRoom = false;
-        //io.on('connection', (socket) => {if(socket.rooms.has(req.body.roomName)){inRoom = true;} else { inRoom = false;}});
-        if(!inRoom)
-        {
-          let roomId = await req.body.roomInput;
-          req.body.roomInput = '';
-          res.render('./pages/privateCanvas',{canvasNumber: roomId});
-          console.log("here comes the tricky part");
-          let entered = false
-          io.on('connection', (socket) => {
-            if(entered == false){
-              designateRoom(socket,roomId);  // this function should only be called once per post request
-              entered = true;
-            }});
-        }
-    
-    });
+app.post("/canvas", async(req, res) => {
+    console.log("---------------------------------------------------");
+    let inRoom = false;
+    //io.on('connection', (socket) => {if(socket.rooms.has(req.body.roomName)){inRoom = true;} else { inRoom = false;}});
+    if(!inRoom) {
+        let roomId = await req.body.roomInput;
+        req.body.roomInput = '';
+        res.render('./pages/privateCanvas',{canvasNumber: roomId});
+        console.log("here comes the tricky part");
+        let entered = false
+        io.on('connection', (socket) => {
+          if(entered == false){
+            designateRoom(socket,roomId);  // this function should only be called once per post request
+            entered = true;
+        }});
+    }
+});
 // *****************************************************
 // <!-- LAB 11 -->
 // *****************************************************
