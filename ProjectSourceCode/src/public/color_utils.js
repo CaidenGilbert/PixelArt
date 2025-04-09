@@ -94,6 +94,21 @@ export function addClickEvents(preview_canvas, hue_slider_canvas, sv_slider_canv
   formula taken from https://www.rapidtables.com/convert/color/hsv-to-rgb.html 
 */
 export function hsvToRGB(hue, saturation, value) {
+  if (hue < 0 || hue > 360) {
+    console.log("Invalid Hue");
+    return [0, 0, 0];
+  }
+
+  if (saturation < 0 || saturation > 1) {
+    console.log("Invalid Saturation");
+    return [0, 0, 0];
+  }
+
+  if (value < 0 || value > 1) {
+    console.log("Invalid Value");
+    return [0, 0, 0];
+  }
+
   const C = saturation * value;
   const X = C * (1 - Math.abs( ( (hue / 60) % 2) - 1) ); 
   const m = value - C;
@@ -131,9 +146,10 @@ export function hsvToRGB(hue, saturation, value) {
     g = 0;
     b = X;
   }
-  else {
-    console.log("Invalid Hue");
-  }
 
-  return [255 * (r + m), 255 * (g + m), 255 * (b + m)]; 
+  r = Math.round( 255 * (r + m) );
+  g = Math.round( 255 * (g + m) );
+  b = Math.round( 255 * (b + m) );
+
+  return [r, g, b]; 
 }
