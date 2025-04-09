@@ -1,0 +1,67 @@
+GOOGLE DOCS LINK TO PAGE:
+
+https://docs.google.com/document/d/1mJZD2j8MRsV9ek5-_KUNFMMxBRpFA1Cle04wPdsPaS0/edit?usp=sharing
+
+UAT For Exclusive Canvas:
+
+-This test will be conducted on a localhost test environment with multiple users being simulated by multiple tabs.
+
+- The artist should be able to enter the room code and be redirected to the canvas page where they can collaborate 
+with their friends. This will be tested by sending a 302 response from the server along with a message stating that 
+the user has been redirected to the “ ‘canvas name’ canvas”.
+
+- The artist will be able to watch the canvas being updated in real-time without personally updating the canvas. 
+This will be tested by verifying what room the user is in by their associated web socket. Additionally, when the 
+user enters the room, a console.log message will be sent stating “User is updated” after the connection with Redis 
+has been made and all previous changes emitted to the user.
+
+- As the only artist in an exclusive canvas the artist will be able to change the canvas and then proceed to leave 
+the shared canvas without losing their change. The artist will enter the shared canvas, and then they will change 
+a central pixel to a different color and then leave the shared canvas by switching to another shared canvas. Upon the users 
+socket disconnecting a post request will be sent to the server which will update the users database with the most recent pixel art. 
+This will be detectable by a console.log message what will be displayed stating: "The canvas has been saved"+ (a comparison between the 
+canvas right before the user disconnected to the canvas stored in the database). The correct console.log statement will look like "The canvas has been saved: true"
+This will be tested by comparing the canvas before the change and after the change once they leave. This can be conducted 
+by getting the canvas when it is first made and added to the database, then comparing it to the canvas that was pushed 
+from the Redis database upon the disconnection of the user.
+
+-The user acceptance tester will be an artist who wants to collaborate with another artist on the same canvas. 
+I will be representing both artists by having two tabs pulled up next to each other while I color the canvas.
+With both tabs pulled up, I will only interact with one of the tabs while I should watch the other tab update 
+instantly after I change a pixel color on the other tab.
+
+UAT For Public Canvas Button:
+
+-This test will be conducted on a localhost test environment with one user being simulated by one tab
+
+-The artist after clicking the publish button should be redirected to the public gallery where in the upper 
+left corner their newly created artwork will be displayed. This will be conducted by sending along the URL where the artist was redirected.
+
+-The artist should be able to navigate to the private canvas page and view the canvas that they recently published. 
+When the user clicks on the private gallery button, its corresponding URL should be sent to Chai 
+where it will be evaluated. Once the user is in the private gallery they should be able to locate the canvas they 
+recently published.
+
+-The artist should be able to further edit the canvas that they recently published without changing the publicly displayed version. 
+The user should be able to click into the canvas they recently published and then change the color of the leftmost pixel on the canvas. 
+When this action is performed an emit broadcast should be sent which will be evaluated by an assert statement. 
+This assertion will validate that the appropriate canvas pixel was changed. 
+Then another assertion will compare the pixel on the published version to the pixel on the private version and verify 
+that they are different.
+
+UAT For User Session:
+
+-This test will be conducted on a localhost test environment with one user being simulated by one tab
+
+-When a user is not logged in, if they try to enter an exclusive canvas with a code, they should be redirected to the home page. 
+This will be done by trying to render the exclusive canvas page by sending a post request with an associated exclusive canvas code. 
+Then the post request should perform validation of the user. After the validation fails, the post request should send the url that the user will be redirected to. 
+This page should be the login page.
+
+-When a user is not logged in, the user will not be able to log out. If the user tries to log out of the application without ever being 
+logged in, the logout API should send a response with a 400 series error indicating that the client was not authenticated and therefore 
+was not able to log out. Afterwards the login page should be rendered.
+
+-When a user is not logged in, they should be able to get to the public gallery. 
+This implies that when the user clicks(get request) on the public canvas button, a 302 status should be sent along with the URL 
+that they have been redirected to. This URL should be the same as the public canvas page.

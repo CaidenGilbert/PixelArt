@@ -141,11 +141,11 @@ app.post("/login", async(req, res) =>
 {
 console.log("In post login")
 const query = "select password from users where username= '"+req.body.username+"';";
-console.log(query);
 try
 {
     const results = await db.any(query);
     const match = await bcrypt.compare(req.body.password, results[0].password);
+    
     if(match == true)
     {
     user.password = req.body.password;
@@ -153,10 +153,12 @@ try
     req.session.user = user;
     req.session.save();
     res.redirect("/homeCanvas");
+
     }
     else
     {
-    res.render("./pages/login",{message:"Incorrect username or password"});
+    
+    res.status(400).render("./pages/login",{message:"Incorrect username or password"});
     }
 }
 catch(err)
@@ -174,47 +176,63 @@ app.get("/register", (req, res) =>
 app.post("/register", async (req,res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
   const query = "Insert into users (username,password) values ( '"+req.body.username+"','"+hash+"' );"
+  let testUsername = req.body.username.replace(/\s/g,"");
   try
   {
-    const results = await db.any(query);
-    res.redirect("./pages/login");
+    if(testUsername.length != 0)
+    {
+        db.any(query);
+        res.redirect("./pages/login");
+    }
+    else
+    {
+      res.status(400).render("./pages/register");
+    }
   }
   catch(err)
   {
-    res.redirect("./pages/register");
+    res.status(400).render("./pages/register");
   }
+
 })
 
-  app.get('/logout', (req, res) => {
-    console.log('logout sucsessful');
-      const saveUsername = user.username;
-      req.session.destroy(function(err) {
-          res.render('./pages/logout',{message: "See you next time, "+saveUsername});
-      });
-      });
+app.get('/color_picker', (req, res) => {
+    res.render('./pages/color_picker.hbs');
+});
+
+app.get('/logout', (req, res) => {
+    const saveUsername = user.username;
+    req.session.destroy(function(err) {
+        res.render('./pages/logout',{username: saveUsername});
+    });
+});
     
 //add variable to save last room
 
-app.post("/canvas", async(req, res) => 
-    {
-        console.log("---------------------------------------------------");
-        let inRoom = false;
-        //io.on('connection', (socket) => {if(socket.rooms.has(req.body.roomName)){inRoom = true;} else { inRoom = false;}});
-        if(!inRoom)
-        {
-          let roomId = await req.body.roomInput;
-          req.body.roomInput = '';
-          res.render('./pages/privateCanvas',{canvasNumber: roomId});
-          console.log("here comes the tricky part");
-          let entered = false
-          io.on('connection', (socket) => {
-            if(entered == false){
-              designateRoom(socket,roomId);  // this function should only be called once per post request
-              entered = true;
-            }});
-        }
-    
-    });
+app.post("/canvas", async(req, res) => {
+    console.log("---------------------------------------------------");
+    let inRoom = false;
+    //io.on('connection', (socket) => {if(socket.rooms.has(req.body.roomName)){inRoom = true;} else { inRoom = false;}});
+    if(!inRoom) {
+        let roomId = await req.body.roomInput;
+        req.body.roomInput = '';
+        res.render('./pages/privateCanvas',{canvasNumber: roomId});
+        console.log("here comes the tricky part");
+        let entered = false
+        io.on('connection', (socket) => {
+          if(entered == false){
+            designateRoom(socket,roomId);  // this function should only be called once per post request
+            entered = true;
+        }});
+    }
+});
+// *****************************************************
+// <!-- LAB 11 -->
+// *****************************************************
+
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
 
 // *****************************************************
 // <!-- Authentication middleware. -->
@@ -320,6 +338,6 @@ io.on('connection', (socket) => {
     
 });
 
-server.listen(3000, () => {
+module.exports = server.listen(3000, () => {
   console.log("listening on *:3000");
 });
