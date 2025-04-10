@@ -12,7 +12,7 @@ describe('API Test', () => {
   it('Should return 200 http status', (done) => {
     chai
       .request(server)
-      .get('/')
+      .get('/color_picker')
       .end((err, res) => {
         expect(res).to.have.status(200);
         done();
@@ -26,13 +26,13 @@ describe('HSV to RGB Tests', () => {
   // Values are compared to aseprite
   it('grayscale colors', (done) => {
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0, 1); 
-    expect(stringifyColor(color)).to.equal("ffffff");
+    expect(color_utils.stringifyColor(color)).to.equal("ffffff");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0, 0.5); 
-    expect(stringifyColor(color)).to.equal("808080");
+    expect(color_utils.stringifyColor(color)).to.equal("808080");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0, 0.1); 
-    expect(stringifyColor(color)).to.equal("1a1a1a");
+    expect(color_utils.stringifyColor(color)).to.equal("1a1a1a");
 
     hue += INCREMENT;
     done();
@@ -40,13 +40,13 @@ describe('HSV to RGB Tests', () => {
 
   it('greens', (done) => {
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0.1, 1); 
-    expect(stringifyColor(color)).to.equal("f2ffe6");
+    expect(color_utils.stringifyColor(color)).to.equal("f2ffe6");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0.5, 0.5); 
-    expect(stringifyColor(color)).to.equal("608040");
+    expect(color_utils.stringifyColor(color)).to.equal("608040");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 1, 0.1); 
-    expect(stringifyColor(color)).to.equal("0d1a00");
+    expect(color_utils.stringifyColor(color)).to.equal("0d1a00");
 
     hue += INCREMENT;
     done();
@@ -54,13 +54,13 @@ describe('HSV to RGB Tests', () => {
 
   it('blues', (done) => {
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0.1, 1); 
-    expect(stringifyColor(color)).to.equal("e6ffff");
+    expect(color_utils.stringifyColor(color)).to.equal("e6ffff");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0.5, 0.5); 
-    expect(stringifyColor(color)).to.equal("408080");
+    expect(color_utils.stringifyColor(color)).to.equal("408080");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 1, 0.1); 
-    expect(stringifyColor(color)).to.equal("001a1a");
+    expect(color_utils.stringifyColor(color)).to.equal("001a1a");
 
     hue += INCREMENT;
     done();
@@ -68,13 +68,13 @@ describe('HSV to RGB Tests', () => {
 
   it('purples', (done) => {
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0.1, 1); 
-    expect(stringifyColor(color)).to.equal("f2e6ff");
+    expect(color_utils.stringifyColor(color)).to.equal("f2e6ff");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0.5, 0.5); 
-    expect(stringifyColor(color)).to.equal("604080");
+    expect(color_utils.stringifyColor(color)).to.equal("604080");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 1, 0.1); 
-    expect(stringifyColor(color)).to.equal("0d001a");
+    expect(color_utils.stringifyColor(color)).to.equal("0d001a");
 
     hue += INCREMENT;
     done();
@@ -82,13 +82,13 @@ describe('HSV to RGB Tests', () => {
 
   it('reds', (done) => {
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0.1, 1); 
-    expect(stringifyColor(color)).to.equal("ffe6e6");
+    expect(color_utils.stringifyColor(color)).to.equal("ffe6e6");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0.5, 0.5); 
-    expect(stringifyColor(color)).to.equal("804040");
+    expect(color_utils.stringifyColor(color)).to.equal("804040");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 1, 0.1); 
-    expect(stringifyColor(color)).to.equal("1a0000");
+    expect(color_utils.stringifyColor(color)).to.equal("1a0000");
 
     hue += INCREMENT;
     done();
@@ -96,29 +96,13 @@ describe('HSV to RGB Tests', () => {
 
   it('invalid hue, saturation, or value should return black', (done) => {
     [color.r, color.g, color.b] = color_utils.hsvToRGB(hue, 0.1, 1); 
-    expect(stringifyColor(color)).to.equal("000000");
+    expect(color_utils.stringifyColor(color)).to.equal("000000");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(0, 2, 1); 
-    expect(stringifyColor(color)).to.equal("000000");
+    expect(color_utils.stringifyColor(color)).to.equal("000000");
 
     [color.r, color.g, color.b] = color_utils.hsvToRGB(0, 1, 2); 
-    expect(stringifyColor(color)).to.equal("000000");
+    expect(color_utils.stringifyColor(color)).to.equal("000000");
     done();
   });
 });
-
-function stringifyColor(color) {
-  let red = color.r.toString(16);
-  if (color.r < 16) {
-    red = `0${red}`;
-  }
-  let green = color.g.toString(16);
-  if (color.g < 16) {
-    green = `0${green}`;
-  }
-  let blue = color.b.toString(16);
-  if (color.b < 16) {
-    blue = `0${blue}`;
-  }
-  return red + green + blue;
-}
