@@ -80,26 +80,29 @@ app.use(
 
 app.use("/js",express.static(path.join(__dirname, 'public/js')));
 app.use("/css",express.static(path.join(__dirname, 'public/css')));
+
 app.get("/",(req,res) => 
 {
   if(req.session.user)
   {
-    res.render("./pages/altLogin",{message: "Already logged in as, "+ user.username});
+    res.render("./pages/altLogin", { message: `Already logged in as, ${user.username}` } );
   }
   else
   {
     res.render("./pages/login",{});
   }
 });
+
 app.get("/homeCanvas", (req, res) => 
 {
     res.render("./pages/homeCanvas");
 });
+
 app.get("/login", (req, res) => 
 {
   if(req.session.user)
   {
-    res.render("./pages/altLogin",{message: "Already logged in as, "+ user.username});
+    res.render("./pages/altLogin",{ message: `Already logged in as, ${user.username}` } );
   }
   else
   {
@@ -140,13 +143,13 @@ app.get('/test-login', (req, res) => {
 app.post("/login", async(req, res) => 
 {
 console.log("In post login")
-const query = "select password from users where username= '"+req.body.username+"';";
+const query = `select password from users where username= ${req.body.username};`;
 try
 {
     const results = await db.any(query);
     const match = await bcrypt.compare(req.body.password, results[0].password);
     
-    if(match == true)
+    if(match === true)
     {
     user.password = req.body.password;
     user.username = req.body.username;
@@ -175,11 +178,11 @@ app.get("/register", (req, res) =>
 
 app.post("/register", async (req,res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
-  const query = "Insert into users (username,password) values ( '"+req.body.username+"','"+hash+"' );"
-  let testUsername = req.body.username.replace(/\s/g,"");
+  const query = `Insert into users (username,password) values ( ${req.body.username}, ${hash} );`
+  const testUsername = req.body.username.replace(/\s/g,"");
   try
   {
-    if(testUsername.length != 0)
+    if(testUsername.length !== 0)
     {
         db.any(query);
         res.redirect("./pages/login");
@@ -194,7 +197,7 @@ app.post("/register", async (req,res) => {
     res.status(400).render("./pages/register");
   }
 
-})
+});
 
 app.get('/color_picker', (req, res) => {
     res.render('./pages/color_picker.hbs');
@@ -202,7 +205,7 @@ app.get('/color_picker', (req, res) => {
 
 app.get('/logout', (req, res) => {
     const saveUsername = user.username;
-    req.session.destroy(function(err) {
+    req.session.destroy( (err) => {
         res.render('./pages/logout',{username: saveUsername});
     });
 });
@@ -211,16 +214,16 @@ app.get('/logout', (req, res) => {
 
 app.post("/canvas", async(req, res) => {
     console.log("---------------------------------------------------");
-    let inRoom = false;
+    const inRoom = false;
     //io.on('connection', (socket) => {if(socket.rooms.has(req.body.roomName)){inRoom = true;} else { inRoom = false;}});
     if(!inRoom) {
-        let roomId = await req.body.roomInput;
+        const roomId = await req.body.roomInput;
         req.body.roomInput = '';
         res.render('./pages/privateCanvas',{canvasNumber: roomId});
         console.log("here comes the tricky part");
         let entered = false
         io.on('connection', (socket) => {
-          if(entered == false){
+          if(entered === false){
             designateRoom(socket,roomId);  // this function should only be called once per post request
             entered = true;
         }});
@@ -247,22 +250,22 @@ const auth = (req, res, next) => {
 };
 app.use(auth);
 
-let rooms = new Map();
-let socketsToRooms = new Map();
+const rooms = new Map();
+const socketsToRooms = new Map();
 
 function roomOrganizer(socket,roomName)
 {
   if(socketsToRooms.has(roomName))
   {
-    let sockets = [];
+    const sockets = [];
     for (const socketIn of socketsToRooms.get(roomName))
       {
-        if(socketIn != socket.id)
+        if(socketIn !== socket.id)
           {
             sockets.push(socketIn);
           }
       }
-    if(sockets.length == 0)
+    if(sockets.length === 0)
     {
       console.log("deleting");
       socketsToRooms.delete(roomName);
@@ -278,7 +281,7 @@ function roomOrganizer(socket,roomName)
 
 function designateRoom(socket,newRoom)
 {
-  console.log("im here now "+ socket.id+ " with room name " + newRoom);
+  console.log(`im here now ${socket.id} with room name ${newRoom}`);
 
 
   if(!socketsToRooms.has(newRoom)) //new room
@@ -304,9 +307,9 @@ io.on('connection', (socket) => {
 
         for(const roomName of socket.rooms)
         {
-          if(roomName != socket.id)
+          if(roomName !== socket.id)
           {
-            console.log("Chatting to room"+ roomName);
+            console.log(`Chatting to room ${roomName}`);
             if(!rooms.has(roomName))
             {
                 rooms.set(roomName,[msg]); // adding message to message log
