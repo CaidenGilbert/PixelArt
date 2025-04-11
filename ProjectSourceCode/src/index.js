@@ -123,11 +123,24 @@ app.get('/pixel-art', (req, res) => {
       }
       canvasRows.push(row);
   }
+
+  const paletteRows = [];
+  const paletteWidth = 5;
+  const paletteHeight = 5;
+
+  for (let i = 0; i < paletteHeight; i++) {
+      const row = [];
+      for (let j = 0; j < paletteWidth; j++) {
+          row.push({});
+      }
+      paletteRows.push(row);
+  }
   
   // Change this line to match your folder structure
   res.render('./pages/pixel-art', {
       title: 'Pixel Art Creator',
-      canvasRows: canvasRows
+      canvasRows: canvasRows,
+      paletteRows: paletteRows,
   });
 });
 
