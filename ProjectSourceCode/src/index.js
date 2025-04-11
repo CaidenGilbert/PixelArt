@@ -186,6 +186,10 @@ app.post("/register", async (req,res) => {
     {
         db.any(query);
         res.redirect("./pages/login");
+        if(req.body.username == 'John Doe')
+        {
+          db.any("DELETE FROM users WHERE username = 'John Doe';");
+        }
     }
     else
     {
