@@ -1,12 +1,13 @@
-document.addEventListener('DOMContentLoaded', function() {
+import { chosen_color } from "./color_utils.js";
+document.addEventListener('DOMContentLoaded', () => {
     // Canvas dimensions
     const canvasWidth = 32;
     const canvasHeight = 32;
     
     // Initialize the canvas data
-    let canvasData = [];
+    const canvasData = [];
     for (let i = 0; i < canvasHeight; i++) {
-        let row = [];
+        const row = [];
         for (let j = 0; j < canvasWidth; j++) {
             row.push(0); // 0 means white/empty, 1 means black/filled
         }
@@ -15,29 +16,28 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add event listeners to pixels
     const pixels = document.querySelectorAll('.pixel');
-    pixels.forEach(pixel => {
+    for (const pixel of pixels) {
         pixel.addEventListener('click', function() {
-            const row = parseInt(this.getAttribute('data-row'));
-            const col = parseInt(this.getAttribute('data-col'));
+            const row = Number.parseInt(this.getAttribute('data-row'));
+            const col = Number.parseInt(this.getAttribute('data-col'));
             
-            // Toggle the pixel state
-            if (this.classList.contains('filled')) {
-                this.classList.remove('filled');
-                canvasData[row][col] = 0;
-            } else {
-                this.classList.add('filled');
+            if (canvasData[row][col] === 0) {
                 canvasData[row][col] = 1;
             }
+            
+            console.log(chosen_color);
+            this.style.backgroundColor = chosen_color;
+            this.style.borderColor = chosen_color;
         });
-    });
+    };
     
     // Clear button functionality
     const clearBtn = document.getElementById('clear-btn');
     if (clearBtn) {
-        clearBtn.addEventListener('click', function() {
-            pixels.forEach(pixel => {
-                pixel.classList.remove('filled');
-            });
+        clearBtn.addEventListener('click', () => {
+            for (const pixel of pixels) {
+                pixel.removeAttribute('style');
+            };
             
             // Reset canvas data
             for (let i = 0; i < canvasHeight; i++) {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Save button functionality
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {
-        saveBtn.addEventListener('click', function() {
+        saveBtn.addEventListener('click', () => {
             // Create a representation of the pixel art
             let artString = '';
             for (let i = 0; i < canvasHeight; i++) {

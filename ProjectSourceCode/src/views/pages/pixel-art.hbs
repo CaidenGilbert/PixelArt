@@ -1,14 +1,37 @@
-<div class="pixel-art-container">
-    <h1>Pixel Art Creator</h1>
-    
-    <div class="controls">
-        <button id="clear-btn">Clear Canvas</button>
-        <button id="save-btn">Save Art</button>
+<div class="container">
+  <div class="row">
+
+    <div class="col"></div>
+
+    <div class="col">
+      <div class="d-flex flex-column align-items-center">
+        <h1>Pixel Art Creator</h1>
+
+        <div class="controls">
+          <button id="clear-btn">Clear Canvas</button>
+          <button id="save-btn">Save Art</button>
+        </div>
+      </div>
     </div>
-    
-    {{> pixel-canvas rows=canvasRows}}
+
+    <div class="col"></div>
+
+  </div>
+  
+  <div class="row">
+
+    <div class="col">
+      {{> color_picker}}
+    </div>
+
+    <div class="col">
+      {{> pixel-canvas rows=canvasRows}}
+    </div>
+
+    <div class="col"></div>
+
+  </div>
+
+  <script type="module" src="/js/pixel-canvas.js"></script>
+  <link rel="stylesheet" href="/css/pixel-canvas.css">
 </div>
-
-<script src="/js/pixel-canvas.js"></script>
-
-<link rel="stylesheet" href="/css/pixel-canvas.css">

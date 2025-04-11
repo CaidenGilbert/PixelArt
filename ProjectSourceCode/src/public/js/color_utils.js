@@ -1,4 +1,5 @@
-export const color = {h: 0, s: 0, v: 0, r: 0, g: 0, b: 0};
+const color = {h: 0, s: 0, v: 0, r: 0, g: 0, b: 0};
+export let chosen_color = "#000000";
 
 export function drawInitialCanvases(preview_canvas, hue_slider_canvas, sv_slider_canvas) {
   const preview_context = preview_canvas.getContext("2d");
@@ -55,6 +56,7 @@ export function addClickEvents(preview_canvas, hue_slider_canvas, sv_slider_canv
     color.s = pos.x / this.width;
     color.v = pos.y / this.height;
     [color.r, color.g, color.b] = hsvToRGB(color.h, color.s, color.v);
+    chosen_color = `#${stringifyColor(color)}`;
 
     preview_context.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
     preview_context.fillRect(0, 0, preview_canvas.width, preview_canvas.height);
@@ -67,13 +69,14 @@ export function addClickEvents(preview_canvas, hue_slider_canvas, sv_slider_canv
 
     // convert x pos to hue (in degrees)
     color.h = (pos / this.width) * 360;
-    [color.r, color.g, color.b] = hsvToRGB(color.h, 1, 1);
+    // don't want to change chosen color when we change hue
+    const [r, g, b] = hsvToRGB(color.h, 1, 1);
 
     // display saturation/value gradient
     // start with saturation
     const saturation_gradient = sv_slider_context.createLinearGradient(0, 0, sv_slider_canvas.width, 0);
     saturation_gradient.addColorStop(0, "#FFFFFF");
-    saturation_gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 1)`);
+    saturation_gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 1)`);
     
     sv_slider_context.fillStyle = saturation_gradient;
     sv_slider_context.fillRect(0, 0, sv_slider_canvas.width, sv_slider_canvas.height);
@@ -152,4 +155,20 @@ export function hsvToRGB(hue, saturation, value) {
   b = Math.round( 255 * (b + m) );
 
   return [r, g, b]; 
+}
+
+export function stringifyColor(color) {
+  let red = color.r.toString(16);
+  if (color.r < 16) {
+    red = `0${red}`;
+  }
+  let green = color.g.toString(16);
+  if (color.g < 16) {
+    green = `0${green}`;
+  }
+  let blue = color.b.toString(16);
+  if (color.b < 16) {
+    blue = `0${blue}`;
+  }
+  return red + green + blue;
 }
