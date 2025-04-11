@@ -1,15 +1,28 @@
-{{>message}}
+{{message}}
 <h3>Register</h3>
-<form method = "post" action="/register">
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" name = "username" class="form-control" id="username" aria-describedby="username">
-        <label for="password">Password</label>
-        <input type="text" name = "password" class="form-control" id="password" aria-describedby="password">
-    </div>
-    <input type="submit" class="btn btn-primary mt-3" name="Register">
-    <div>
-        <small id="registrationHelp" class="form-text text-muted">Already have an account?</small>
-        <a href="/login">Login Here</a>
-    </div>
+
+<!-- 注册表单，支持上传头像，需要使用 multipart/form-data 编码 -->
+<form method="post" action="/register" enctype="multipart/form-data">
+  <div class="form-group">
+    <!-- 用户名输入框 -->
+    <label for="username">Username</label>
+    <input type="text" name="username" class="form-control" id="username" aria-describedby="username">
+
+    <!-- 密码输入框 -->
+    <label for="password">Password</label>
+    <input type="text" name="password" class="form-control" id="password" aria-describedby="password">
+
+    <!-- 头像上传输入框，只接受 png 和 jpeg 图片 -->
+    <label for="avatar">Upload Profile Picture</label>
+    <input type="file" name="avatar" class="form-control" accept="image/png, image/jpeg">
+  </div>
+
+  <!-- 提交按钮 -->
+  <input type="submit" class="btn btn-primary mt-3" name="Register">
+
+  <!-- 登录跳转提示 -->
+  <div>
+    <small id="registrationHelp" class="form-text text-muted">Already have an account?</small>
+    <a href="/login">Login Here</a>
+  </div>
 </form>

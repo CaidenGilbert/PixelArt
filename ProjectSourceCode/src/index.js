@@ -176,7 +176,7 @@ app.get("/register", (req, res) =>
   res.render("./pages/register",{});
 });
 
-app.post("/register", async (req,res) => {
+/*app.post("/register", async (req,res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
   const query = `Insert into users (username,password) values ( ${req.body.username}, ${hash} );`
   const testUsername = req.body.username.replace(/\s/g,"");
@@ -198,6 +198,46 @@ app.post("/register", async (req,res) => {
   }
 
 });
+*/
+// 引入 multer 用于处理头像文件上传
+const multer = require('multer');
+
+// 配置上传文件的保存位置和文件名
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/uploads'); // 上传到 public/uploads 文件夹（你需要创建它）
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // 用当前时间戳作为文件名
+  }
+});
+
+const upload = multer({ storage });
+
+// 重写注册路由，使用 multer 处理头像字段
+app.post("/register", upload.single('avatar'), async (req, res) => {
+  const hash = await bcrypt.hash(req.body.password, 10);
+  const testUsername = req.body.username.replace(/\s/g, "");
+
+  // 获取头像路径，如果用户没有上传头像则使用默认头像
+  const avatarPath = req.file ? `/uploads/${req.file.filename}` : '/uploads/default.png';
+
+  // 将用户名、加密后的密码、头像路径插入数据库
+  const query = `INSERT INTO users (username, password, avatar) VALUES ('${req.body.username}', '${hash}', '${avatarPath}');`;
+
+  try {
+    if (testUsername.length !== 0) {
+      await db.none(query); 
+      res.redirect("/login"); // 注册成功后跳转登录页
+    } else {
+      res.status(400).render("./pages/register", { message: "Username cannot be empty." });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(400).render("./pages/register", { message: "Registration failed." });
+  }
+});
+
 
 app.get('/color_picker', (req, res) => {
     res.render('./pages/color_picker.hbs');
