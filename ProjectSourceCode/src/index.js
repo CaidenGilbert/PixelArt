@@ -142,8 +142,8 @@ app.get('/test-login', (req, res) => {
 
 app.post("/login", async(req, res) => 
 {
-console.log("In post login")
-const query = `select password from users where username= ${req.body.username};`;
+const query = "select password from users where username = '"+req.body.username+"';";
+console.log(query);
 try
 {
     const results = await db.any(query);
@@ -178,13 +178,13 @@ app.get("/register", (req, res) =>
 
 app.post("/register", async (req,res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
-  const query = `Insert into users (username,password) values ( ${req.body.username}, ${hash} );`
+  const query = "Insert into users (username,password) values ( '"+req.body.username+"','"+ hash + "');";
   const testUsername = req.body.username.replace(/\s/g,"");
   try
   {
     if(testUsername.length !== 0)
     {
-        db.any(query);
+        await db.any(query);
         res.redirect("./pages/login");
         if(req.body.username == 'John Doe')
         {
@@ -193,12 +193,12 @@ app.post("/register", async (req,res) => {
     }
     else
     {
-      res.status(400).render("./pages/register");
+      res.status(400).render("./pages/register",{message:"Invalid Username"});
     }
   }
   catch(err)
   {
-    res.status(400).render("./pages/register");
+    res.status(400).render("./pages/register",{message: "Username is not valid"});
   }
 
 });
@@ -224,7 +224,6 @@ app.post("/canvas", async(req, res) => {
         const roomId = await req.body.roomInput;
         req.body.roomInput = '';
         res.render('./pages/privateCanvas',{canvasNumber: roomId});
-        console.log("here comes the tricky part");
         let entered = false
         io.on('connection', (socket) => {
           if(entered === false){
