@@ -1,4 +1,4 @@
-import { chosen_color } from "./color_utils.js";
+import { chosen_color, rgbToHex } from "./color_utils.js";
 document.addEventListener('DOMContentLoaded', () => {
     // Canvas dimensions
     const canvasWidth = 32;
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 canvasData[row][col] = 1;
             }
             
-            console.log(chosen_color);
+            // console.log(chosen_color);
             this.style.backgroundColor = chosen_color;
             this.style.borderColor = chosen_color;
         });
@@ -47,27 +47,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
-    // Save button functionality
+
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
-            // Create a representation of the pixel art
-            let artString = '';
-            for (let i = 0; i < canvasHeight; i++) {
-                for (let j = 0; j < canvasWidth; j++) {
-                    artString += canvasData[i][j] ? '■' : '□';
+            const artwork_name = document.getElementById('artwork_name').value || "Untitled";
+            const num_pixels = pixels.length;
+            const artwork_data = [];
+
+            for (let i = 0; i < num_pixels; i++) {
+                if (pixels[i].style.backgroundColor) {
+                    artwork_data.push({
+                        position: i,
+                        color: rgbToHex(pixels[i].style.backgroundColor)
+                    });
                 }
-                artString += '\n';
             }
-            
-            // Output to console for now
-            console.log('Your pixel art:');
-            console.log(artString);
-            
-            // For a real implementation, you might want to convert this to an image
-            // or save it to local storage/server
-            alert('Pixel art saved to console!');
+
+            axios.post('/save_canvas', {
+                name: `${artwork_name}`,
+                properties: {
+                    size: num_pixels,
+                    artArray: artwork_data
+                }
+            });
         });
     }
 });

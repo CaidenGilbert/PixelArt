@@ -186,7 +186,7 @@ app.post("/register", async (req,res) => {
     {
         await db.any(query);
         res.redirect("./pages/login");
-        if(req.body.username == 'John Doe')
+        if(req.body.username === 'John Doe')
         {
           db.any("DELETE FROM users WHERE username = 'John Doe';");
         }
@@ -201,6 +201,24 @@ app.post("/register", async (req,res) => {
     res.status(400).render("./pages/register",{message: "Username is not valid"});
   }
 
+});
+
+app.post('/save_canvas', (req, res) => {
+    const query = `
+        INSERT INTO artwork (artwork_name, properties)
+        VALUES ('${req.body.name}', '${JSON.stringify(req.body.properties)}')
+        ON CONFLICT (artwork_name)
+        DO UPDATE SET properties = '${JSON.stringify(req.body.properties)}';
+    `;
+
+    try {
+        db.none(query);
+        console.dir(req.body.properties, {depth: null});
+        res.status(204);
+    }
+    catch (err) {
+        res.status(400);  
+    }
 });
 
 app.get('/color_picker', (req, res) => {

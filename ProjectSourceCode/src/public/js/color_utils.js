@@ -172,3 +172,12 @@ export function stringifyColor(color) {
   }
   return red + green + blue;
 }
+
+// converts string of form "rgb(#, #, #)" to hex rgb with # in front
+export function rgbToHex(color_string) {
+    const rgb = color_string.split(/[\(\)]/)[1].split(",");
+    const r = Number.parseInt(rgb[0]); 
+    const g = Number.parseInt(rgb[1]);
+    const b = Number.parseInt(rgb[2]);
+    return `#${stringifyColor({r, g, b})}`;
+}
