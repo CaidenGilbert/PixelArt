@@ -1,0 +1,20 @@
+{{> message}}
+
+<div class="container text-center">
+  {{#each artworks}}
+    <div class="row">
+      {{#each this}}
+        <div class="col-4">
+
+          <div class="card">
+            <div class="card-body">
+              <a class="card-title" href="/pixel-art">{{this.artwork_name}}</a>
+            </div>
+          </div>
+
+        </div>
+      {{/each}}
+    </div>
+    <br>
+  {{/each}}
+</div>

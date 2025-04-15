@@ -253,6 +253,38 @@ const auth = (req, res, next) => {
 };
 app.use(auth);
 
+app.get('/private_gallery', async (req, res) => {
+    const COLS_PER_ROW = 3;
+    const query = `
+        WITH user_artwork_ids AS (
+          SELECT artwork FROM users_to_artwork
+          WHERE username = '${req.session.user.username}'
+        )
+        SELECT * 
+        FROM artwork INNER JOIN user_artwork_ids
+        ON artwork.artwork_id = user_artwork_ids.artwork;
+    `;
+    
+    try {
+        const results = await db.any(query);
+        const num_rows = Math.floor(results.length / COLS_PER_ROW) + 1;
+        const split_results = [];
+        for (let i = 0; i < num_rows; i++) {
+            split_results[i] = results.slice(i * COLS_PER_ROW, i * COLS_PER_ROW + COLS_PER_ROW);
+        }   
+
+        res.status(200).render('./pages/private_gallery.hbs', {
+            artworks: split_results,
+        });
+    }
+    catch (err) {
+        res.status(404).render('./pages/private_gallery.hbs', {
+            artworks: [],
+        });
+    }
+});
+
+
 const rooms = new Map();
 const socketsToRooms = new Map();
 
