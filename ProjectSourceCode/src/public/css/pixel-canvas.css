@@ -16,6 +16,20 @@ button:hover {
     background-color: #45a049;
 }
 
+.artwork-link {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    color: blue;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+}
+
+.artwork-link:hover {
+    background-color: Transparent;
+}
+
 .canvas-container {
     background-color: white;
     border: 1px solid #ccc;
