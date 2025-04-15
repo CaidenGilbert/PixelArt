@@ -51,23 +51,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
-            const artwork_name = document.getElementById('artwork_name').value || "Untitled";
-            const num_pixels = pixels.length;
+            const artwork_name = document.getElementById('artwork_name').value;
             const artwork_data = [];
 
-            for (let i = 0; i < num_pixels; i++) {
-                if (pixels[i].style.backgroundColor) {
-                    artwork_data.push({
-                        position: i,
-                        color: rgbToHex(pixels[i].style.backgroundColor)
-                    });
+            for (let i = 0; i < canvasHeight; i++) {
+                for (let j = 0; j < canvasWidth; j++) {
+                  if (canvasData[i][j]) {
+                      artwork_data.push({
+                          position: [j, i],
+                          color: rgbToHex(pixels[j + (i * canvasWidth)].style.backgroundColor)
+                      });
+                  }
                 }
             }
 
             axios.post('/save_canvas', {
                 name: `${artwork_name}`,
                 properties: {
-                    size: num_pixels,
+                    width: canvasWidth,
+                    height: canvasHeight,
                     artArray: artwork_data
                 }
             });

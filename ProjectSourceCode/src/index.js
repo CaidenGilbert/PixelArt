@@ -124,7 +124,6 @@ app.get('/pixel-art', (req, res) => {
       canvasRows.push(row);
   }
   
-  // Change this line to match your folder structure
   res.render('./pages/pixel-art', {
       title: 'Pixel Art Creator',
       canvasRows: canvasRows
@@ -213,13 +212,14 @@ app.post('/save_canvas', (req, res) => {
 
     try {
         db.none(query);
-        console.dir(req.body.properties, {depth: null});
+        // console.dir(req.body.properties, {depth: null});
         res.status(204);
     }
     catch (err) {
         res.status(400);  
     }
 });
+
 
 app.get('/color_picker', (req, res) => {
     res.render('./pages/color_picker.hbs');
