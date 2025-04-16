@@ -213,6 +213,27 @@ app.get('/logout', (req, res) => {
         res.render('./pages/logout',{username: saveUsername});
     });
 });
+
+app.get('/globalGallery', (req, res) => {
+  res.render('./pages/globalGallery.hbs', {
+    title: 'Global Gallery',
+    artworks: []
+  });
+});
+
+app.get('/profile', (req, res) => {
+  res.render('./pages/profile.hbs', {
+    title: 'profile',
+  });
+});
+
+app.get('/privateGallery', (req, res) => {
+  res.render('./pages/privateGallery.hbs', {
+    title: 'profile',
+  });
+});
+
+
     
 //add variable to save last room
 
