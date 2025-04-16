@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then( (res) => {
           const artArray = res.data.properties.artArray;
           const num_drawn_pixels = artArray.length;
-          console.log(artArray);
+          // console.log(artArray);
 
           for (let i = 0; i < num_drawn_pixels; i++) {
             const x = artArray[i].position[0];

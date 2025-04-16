@@ -229,14 +229,6 @@ app.get('/profile', (req, res) => {
     title: 'profile',
   });
 });
-
-app.get('/privateGallery', (req, res) => {
-  res.render('./pages/privateGallery.hbs', {
-    title: 'profile',
-  });
-});
-
-
     
 //add variable to save last room
 
@@ -297,12 +289,12 @@ app.get('/private_gallery', async (req, res) => {
             split_results[i] = results.slice(i * COLS_PER_ROW, i * COLS_PER_ROW + COLS_PER_ROW);
         }   
 
-        res.status(200).render('./pages/private_gallery.hbs', {
+        res.status(200).render('./pages/privateGallery.hbs', {
             artworks: split_results,
         });
     }
     catch (err) {
-        res.status(404).render('./pages/private_gallery.hbs', {
+        res.status(404).render('./pages/privateGallery.hbs', {
             artworks: [],
         });
     }
