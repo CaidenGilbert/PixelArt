@@ -129,6 +129,7 @@ app.get('/pixel-art', (req, res) => {
       title: 'Pixel Art Creator',
       canvasRows: canvasRows,
       saved_canvas: req.session.saved_canvas,
+      artwork_id: req.session.artwork_id,
       artwork_name: req.session.artwork_name,
   });
 });
@@ -287,12 +288,15 @@ app.get('/private_gallery', async (req, res) => {
 });
 
 app.post('/load_canvas', (req, res) => {
+    console.log(req.body);
     if ("new_canvas" in req.body) {
         req.session.saved_canvas = false;
+        req.session.artwork_id = -1;
         req.session.artwork_name = "";
     }
     else {
         req.session.saved_canvas = true;
+        req.session.artwork_id = req.body.artwork_id;
         req.session.artwork_name = req.body.artwork_name;
     }
 
@@ -311,7 +315,7 @@ app.get('/load_canvas', async (req, res) => {
           ON artwork.artwork_id = user_artwork_ids.artwork
         )
         SELECT * FROM user_artworks
-        WHERE user_artworks.artwork_name = '${req.session.artwork_name}';
+        WHERE user_artworks.artwork_id = '${req.session.artwork_id}';
     `;
 
     try {
