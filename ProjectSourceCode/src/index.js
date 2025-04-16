@@ -127,7 +127,10 @@ app.get('/pixel-art', (req, res) => {
   // Change this line to match your folder structure
   res.render('./pages/pixel-art', {
       title: 'Pixel Art Creator',
-      canvasRows: canvasRows
+      canvasRows: canvasRows,
+      saved_canvas: req.session.saved_canvas,
+      artwork_id: req.session.artwork_id,
+      artwork_name: req.session.artwork_name,
   });
 });
 
@@ -226,14 +229,6 @@ app.get('/profile', (req, res) => {
     title: 'profile',
   });
 });
-
-app.get('/privateGallery', (req, res) => {
-  res.render('./pages/privateGallery.hbs', {
-    title: 'profile',
-  });
-});
-
-
     
 //add variable to save last room
 
@@ -273,6 +268,78 @@ const auth = (req, res, next) => {
   next();
 };
 app.use(auth);
+
+app.get('/private_gallery', async (req, res) => {
+    const COLS_PER_ROW = 3;
+    const query = `
+        WITH user_artwork_ids AS (
+          SELECT artwork FROM users_to_artwork
+          WHERE username = '${req.session.user.username}'
+        )
+        SELECT * 
+        FROM artwork INNER JOIN user_artwork_ids
+        ON artwork.artwork_id = user_artwork_ids.artwork;
+    `;
+    
+    try {
+        const results = await db.any(query);
+        const num_rows = Math.floor(results.length / COLS_PER_ROW) + 1;
+        const split_results = [];
+        for (let i = 0; i < num_rows; i++) {
+            split_results[i] = results.slice(i * COLS_PER_ROW, i * COLS_PER_ROW + COLS_PER_ROW);
+        }   
+
+        res.status(200).render('./pages/privateGallery.hbs', {
+            artworks: split_results,
+        });
+    }
+    catch (err) {
+        res.status(404).render('./pages/privateGallery.hbs', {
+            artworks: [],
+        });
+    }
+});
+
+app.post('/load_canvas', (req, res) => {
+    console.log(req.body);
+    if ("new_canvas" in req.body) {
+        req.session.saved_canvas = false;
+        req.session.artwork_id = -1;
+        req.session.artwork_name = "";
+    }
+    else {
+        req.session.saved_canvas = true;
+        req.session.artwork_id = req.body.artwork_id;
+        req.session.artwork_name = req.body.artwork_name;
+    }
+
+    res.status(200).redirect('/pixel-art')
+});
+
+app.get('/load_canvas', async (req, res) => {
+    const query = `
+        WITH user_artwork_ids AS (
+          SELECT artwork FROM users_to_artwork
+          WHERE username = '${req.session.user.username}'
+        ),
+        user_artworks AS (
+          SELECT * 
+          FROM artwork INNER JOIN user_artwork_ids
+          ON artwork.artwork_id = user_artwork_ids.artwork
+        )
+        SELECT * FROM user_artworks
+        WHERE user_artworks.artwork_id = '${req.session.artwork_id}';
+    `;
+
+    try {
+        const result = await db.one(query);
+        console.dir(result, {depth: null});
+        res.status(200).send(result);
+    }
+    catch (err) {
+        res.status(400);
+    }
+});
 
 const rooms = new Map();
 const socketsToRooms = new Map();

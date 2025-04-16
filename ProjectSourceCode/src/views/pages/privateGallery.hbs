@@ -1,4 +1,32 @@
-{{>message}}
-<div class="container">
-  <p> Private Gallery </p>
+{{> message}}
+
+
+<div class="container text-center">
+  <div class="row pb-2">
+    <form action="/load_canvas" method="POST">
+      <input name="new_canvas" type="hidden" value="new_canvas">
+      <button type="submit">New Canvas</button>
+    </form>
+  </div>
+  {{#each artworks}}
+    <div class="row">
+      {{#each this}}
+        <div class="col-4">
+
+          <div class="card">
+            <div class="card-body">
+              <form action="/load_canvas" method="POST">
+                <input name="artwork_id" type="hidden" value="{{this.artwork_id}}">
+                <input name="artwork_name" type="hidden" value="{{this.artwork_name}}">
+                <button type="submit" class="artwork-link">{{this.artwork_name}}</button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      {{/each}}
+    </div>
+    <br>
+  {{/each}}
+  <link rel="stylesheet" href="/css/pixel-canvas.css">
 </div>

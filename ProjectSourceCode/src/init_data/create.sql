@@ -1,8 +1,11 @@
+DROP TABLE IF EXISTS users;
 CREATE TABLE users(username VARCHAR(50) Primary Key, password VARCHAR(60) NOT NUll);
-CREATE Table artwork(artwork_name VARCHAR(50) Primary Key, properties JSON);
+
+DROP TABLE IF EXISTS artwork;
+CREATE Table artwork(artwork_id SERIAL PRIMARY KEY, artwork_name VARCHAR(50), properties JSON);
 
 DROP TABLE IF EXISTS users_to_artwork;
 CREATE TABLE users_to_artwork (
-  username_id VARCHAR(50) NOT NULL REFERENCES users (username),
-  artwork_id VARCHAR(50) NOT NULL REFERENCES artwork (artwork_name)
+  username VARCHAR(50) NOT NULL REFERENCES users (username),
+  artwork INT NOT NULL REFERENCES artwork (artwork_id)
 );
