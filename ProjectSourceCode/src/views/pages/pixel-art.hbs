@@ -26,6 +26,13 @@
     </div>
 
     <div class="col">
+      <form class="pb-2">
+        {{#if saved_canvas}}
+          <input id="artwork_name" placeholder="Name" value="{{artwork_name}}"> 
+        {{else}}
+          <input id="artwork_name" placeholder="Name"> 
+        {{/if}}
+      </form>
       {{> pixel-canvas rows=canvasRows}}
     </div>
 
@@ -34,6 +41,7 @@
   </div>
 
   <script type="module" src="/js/palette.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="module" src="/js/pixel-canvas.js"></script>
   <link rel="stylesheet" href="/css/pixel-canvas.css">
 

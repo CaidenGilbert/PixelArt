@@ -33,9 +33,6 @@ describe('Server!', () => {
 
 
 // *********************** TODO: WRITE 2 UNIT TEST CASES **************************
-describe('Testing Add User API', () => {
-
-})
 //We are checking POST /add_user API by passing the user info in in incorrect manner (name cannot be an integer). This test case should pass and return a status 400 along with a "Invalid input" message.
 
 describe('Testing Add User API', () => {
@@ -51,13 +48,7 @@ describe('Testing Add User API', () => {
           });
     })
   
-    // Example Negative Testcase :
-    // API: /add_user
-    // Input: {id: 5, name: 10, dob: '2020-02-20'}
-    // Expect: res.status == 400 and res.body.message == 'Invalid input'
-    // Result: This test case should pass and return a status 400 along with a "Invalid input" message.
-    // Explanation: The testcase will call the /add_user API with the following invalid inputs
-    // and expects the API to return a status of 400 along with the "Invalid input" message.
+    
     it('Negative : /register. Checking invalid username', done => {
       chai
         .request(server)
@@ -87,13 +78,6 @@ describe('Testing Login', () => {
         });
   })
 
-  // Example Negative Testcase :
-  // API: /add_user
-  // Input: {id: 5, name: 10, dob: '2020-02-20'}
-  // Expect: res.status == 400 and res.body.message == 'Invalid input'
-  // Result: This test case should pass and return a status 400 along with a "Invalid input" message.
-  // Explanation: The testcase will call the /add_user API with the following invalid inputs
-  // and expects the API to return a status of 400 along with the "Invalid input" message.
   it('Negative : /login. Checking for valid username but invalid password', done => {
     chai
       .request(server)

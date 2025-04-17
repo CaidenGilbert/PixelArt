@@ -3,13 +3,28 @@
 <form method = "post" action="/register">
     <div class="form-group">
         <label for="username">Username</label>
-        <input type="text" name = "username" class="form-control" id="username" aria-describedby="username">
+        <input type="text" name = "username" class="form-control" id="username" aria-describedby="username" required onchange="validateUsername(this.value)">
         <label for="password">Password</label>
-        <input type="text" name = "password" class="form-control" id="password" aria-describedby="password">
+        <input type="text" name = "password" class="form-control" id="password" aria-describedby="password" required>
     </div>
-    <input type="submit" class="btn btn-primary mt-3" name="Register">
+    <input id = "createProfile" type="submit" class="btn btn-primary mt-3" name="Register" disabled="true">
     <div>
         <small id="registrationHelp" class="form-text text-muted">Already have an account?</small>
         <a href="/login">Login Here</a>
     </div>
 </form>
+
+<script>
+// This function check to ensure that the username is valid
+function validateUsername(username)
+{
+    if(/^(?!John Doe)[A-Za-z0-9]+/.test(username))  //uses Regex to verify string
+    {
+       document.getElementById("createProfile").disabled = false;
+    }
+    else
+    {
+        document.getElementById("createProfile").disabled = true;
+    }
+}
+</script>

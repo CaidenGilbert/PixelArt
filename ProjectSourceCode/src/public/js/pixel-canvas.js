@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 canvasData[row][col] = 1;
             }
             
-            console.log(chosen_color);
+            // console.log(chosen_color);
             this.style.backgroundColor = chosen_color;
             this.style.borderColor = chosen_color;
         });
@@ -68,6 +68,30 @@ document.addEventListener('DOMContentLoaded', () => {
             // For a real implementation, you might want to convert this to an image
             // or save it to local storage/server
             alert('Pixel art saved to console!');
+        });
+    }
+
+    const artwork_name = document.getElementById('artwork_name').value;
+    if (artwork_name) {
+      axios.get('/load_canvas')
+        .then( (res) => {
+          const artArray = res.data.properties.artArray;
+          const num_drawn_pixels = artArray.length;
+          // console.log(artArray);
+
+          for (let i = 0; i < num_drawn_pixels; i++) {
+            const x = artArray[i].position[0];
+            const y = artArray[i].position[1];
+
+            const pixel = document.querySelector(`[data-row="${y}"][data-col="${x}"]`);
+            // console.log(x, y, pixel);
+
+            pixel.style.backgroundColor = artArray[i].color;
+            pixel.style.borderColor = artArray[i].color;
+          }
+        })
+        .catch( (err) => {
+          console.log(err);
         });
     }
 });

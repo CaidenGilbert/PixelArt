@@ -141,6 +141,9 @@ app.get('/pixel-art', (req, res) => {
       title: 'Pixel Art Creator',
       canvasRows: canvasRows,
       paletteRows: paletteRows,
+      saved_canvas: req.session.saved_canvas,
+      artwork_id: req.session.artwork_id,
+      artwork_name: req.session.artwork_name,
   });
 });
 
@@ -155,8 +158,8 @@ app.get('/test-login', (req, res) => {
 
 app.post("/login", async(req, res) => 
 {
-console.log("In post login")
-const query = `select password from users where username= ${req.body.username};`;
+const query = "select password from users where username = '"+req.body.username+"';";
+console.log(query);
 try
 {
     const results = await db.any(query);
@@ -191,23 +194,27 @@ app.get("/register", (req, res) =>
 
 app.post("/register", async (req,res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
-  const query = `Insert into users (username,password) values ( ${req.body.username}, ${hash} );`
+  const query = "Insert into users (username,password) values ( '"+req.body.username+"','"+ hash + "');";
   const testUsername = req.body.username.replace(/\s/g,"");
   try
   {
     if(testUsername.length !== 0)
     {
-        db.any(query);
+        await db.any(query);
         res.redirect("./pages/login");
+        if(req.body.username == 'John Doe')
+        {
+          db.any("DELETE FROM users WHERE username = 'John Doe';");
+        }
     }
     else
     {
-      res.status(400).render("./pages/register");
+      res.status(400).render("./pages/register",{message:"Invalid Username"});
     }
   }
   catch(err)
   {
-    res.status(400).render("./pages/register");
+    res.status(400).render("./pages/register",{message: "Username is not valid"});
   }
 
 });
@@ -222,6 +229,19 @@ app.get('/logout', (req, res) => {
         res.render('./pages/logout',{username: saveUsername});
     });
 });
+
+app.get('/globalGallery', (req, res) => {
+  res.render('./pages/globalGallery.hbs', {
+    title: 'Global Gallery',
+    artworks: []
+  });
+});
+
+app.get('/profile', (req, res) => {
+  res.render('./pages/profile.hbs', {
+    title: 'profile',
+  });
+});
     
 //add variable to save last room
 
@@ -233,7 +253,6 @@ app.post("/canvas", async(req, res) => {
         const roomId = await req.body.roomInput;
         req.body.roomInput = '';
         res.render('./pages/privateCanvas',{canvasNumber: roomId});
-        console.log("here comes the tricky part");
         let entered = false
         io.on('connection', (socket) => {
           if(entered === false){
@@ -262,6 +281,78 @@ const auth = (req, res, next) => {
   next();
 };
 app.use(auth);
+
+app.get('/private_gallery', async (req, res) => {
+    const COLS_PER_ROW = 3;
+    const query = `
+        WITH user_artwork_ids AS (
+          SELECT artwork FROM users_to_artwork
+          WHERE username = '${req.session.user.username}'
+        )
+        SELECT * 
+        FROM artwork INNER JOIN user_artwork_ids
+        ON artwork.artwork_id = user_artwork_ids.artwork;
+    `;
+    
+    try {
+        const results = await db.any(query);
+        const num_rows = Math.floor(results.length / COLS_PER_ROW) + 1;
+        const split_results = [];
+        for (let i = 0; i < num_rows; i++) {
+            split_results[i] = results.slice(i * COLS_PER_ROW, i * COLS_PER_ROW + COLS_PER_ROW);
+        }   
+
+        res.status(200).render('./pages/privateGallery.hbs', {
+            artworks: split_results,
+        });
+    }
+    catch (err) {
+        res.status(404).render('./pages/privateGallery.hbs', {
+            artworks: [],
+        });
+    }
+});
+
+app.post('/load_canvas', (req, res) => {
+    console.log(req.body);
+    if ("new_canvas" in req.body) {
+        req.session.saved_canvas = false;
+        req.session.artwork_id = -1;
+        req.session.artwork_name = "";
+    }
+    else {
+        req.session.saved_canvas = true;
+        req.session.artwork_id = req.body.artwork_id;
+        req.session.artwork_name = req.body.artwork_name;
+    }
+
+    res.status(200).redirect('/pixel-art')
+});
+
+app.get('/load_canvas', async (req, res) => {
+    const query = `
+        WITH user_artwork_ids AS (
+          SELECT artwork FROM users_to_artwork
+          WHERE username = '${req.session.user.username}'
+        ),
+        user_artworks AS (
+          SELECT * 
+          FROM artwork INNER JOIN user_artwork_ids
+          ON artwork.artwork_id = user_artwork_ids.artwork
+        )
+        SELECT * FROM user_artworks
+        WHERE user_artworks.artwork_id = '${req.session.artwork_id}';
+    `;
+
+    try {
+        const result = await db.one(query);
+        console.dir(result, {depth: null});
+        res.status(200).send(result);
+    }
+    catch (err) {
+        res.status(400);
+    }
+});
 
 const rooms = new Map();
 const socketsToRooms = new Map();
