@@ -1,8 +1,7 @@
 #!/bin/bash
 # DO NOT PUSH THIS FILE TO GITHUB
 # This file contains sensitive information and should be kept private
-# TODO: Set your PostgreSQL URI - Use the External Database URL from the Render dashboard
-PG_URI="<DATABASE_EXTERNAL_URL>"
+PG_URI="postgresql://users_db_pwim_user:6MSS8GiMz360nQ2MWcbGPbKnA6n7yyar@dpg-cvvvafl6ubrc73akjuig-a.virginia-postgres.render.com/users_db_pwim"
 # Execute each .sql file in the directory
 for file in init_data/*.sql; do
     echo "Executing $file..."
