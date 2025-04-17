@@ -12,4 +12,4 @@ VALUES
 INSERT INTO users_to_artwork
   (username_id, artwork_id)
 VALUES
-  ('admin', 'painting_name');
+  ('admin',1);

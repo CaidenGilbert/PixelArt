@@ -29,8 +29,8 @@ const hbs = handlebars.create({
 
 // database configuration
 const dbConfig = {
-    host: 'db', // the database server
-    port: 5432, // the database port
+    host: process.env.POSTGRES_HOST, // the database server
+    port: process.env.POSTGRES_PORT, // the database port
     database: process.env.POSTGRES_DB, // the database name
     user: process.env.POSTGRES_USER, // the user account to connect with
     password: process.env.POSTGRES_PASSWORD, // the password of the user account
@@ -113,8 +113,8 @@ app.get("/login", (req, res) =>
 app.get('/pixel-art', (req, res) => {
   console.log('Pixel art route accessed!');
   const canvasRows = [];
-  const canvasWidth = 32;
-  const canvasHeight = 32;
+  const canvasWidth = 2;
+  const canvasHeight = 2;
   
   for (let i = 0; i < canvasHeight; i++) {
       const row = [];
@@ -203,6 +203,39 @@ app.post("/register", async (req,res) => {
 
 });
 
+app.post('/save_canvas', async(req, res) => {
+  
+  
+  const searchForSameName = "select Count(*) from users left join users_to_artwork on username = username_id left join artwork on artwork_id = artwork.id where users.username = '"+user.username+"' AND artwork.artwork_name = '"+req.body.name+"';";
+  const countExistingArt = await db.any(searchForSameName);
+  console.log(countExistingArt);
+  if(countExistingArt[0].count == 1)
+  {
+    const searchForArtId = "select artwork.id from users left join users_to_artwork on username = username_id left join artwork on artwork_id = artwork.id where users.username = '"+user.username+"' AND artwork.artwork_name = '"+req.body.name+"';";
+    const getArtId = await db.any(searchForArtId);
+    const updateExistingQuery = "update artwork set properties = '"+JSON.stringify(req.body.properties)+"' where artwork.id = "+getArtId[0].id+";";
+    await db.none(updateExistingQuery);
+  }
+  else
+  {
+    const query = `
+    INSERT INTO artwork (artwork_name, properties)
+    VALUES ('${req.body.name}', '${JSON.stringify(req.body.properties)}');`;
+
+    try {
+        await db.none(query);
+        const artworkPrimaryKey = 'select Count(*) from artwork;';
+        const countArt = db.any(artworkPrimaryKey);
+        const addLinkFromUserToArt = "insert into users_to_artwork(username_id,artwork_id) values ('"+user.username+"',"+countArt[0].count+");";
+        await db.none(addLinkFromUserToArt);
+        res.status(204);
+    }
+    catch (err) {
+        res.status(400);  
+    }
+  }
+});
+
 app.get('/color_picker', (req, res) => {
     res.render('./pages/color_picker.hbs');
 });
@@ -217,20 +250,37 @@ app.get('/logout', (req, res) => {
 //add variable to save last room
 
 app.post("/canvas", async(req, res) => {
-    console.log("---------------------------------------------------");
-    const inRoom = false;
-    //io.on('connection', (socket) => {if(socket.rooms.has(req.body.roomName)){inRoom = true;} else { inRoom = false;}});
-    if(!inRoom) {
-        const roomId = await req.body.roomInput;
-        req.body.roomInput = '';
-        res.render('./pages/privateCanvas',{canvasNumber: roomId});
-        let entered = false
-        io.on('connection', (socket) => {
-          if(entered === false){
-            designateRoom(socket,roomId);  // this function should only be called once per post request
-            entered = true;
-        }});
-    }
+  console.log("---------------------------------------------------");
+  console.log('Pixel art route accessed!');
+  const inRoom = false;
+  //io.on('connection', (socket) => {if(socket.rooms.has(req.body.roomName)){inRoom = true;} else { inRoom = false;}});
+  const roomId = await req.body.roomInput;
+  req.body.roomInput = '';
+  const canvasRows = [];
+  const canvasWidth = 2;
+  const canvasHeight = 2;
+  
+  for (let i = 0; i < canvasHeight; i++) {
+      const row = [];
+      for (let j = 0; j < canvasWidth; j++) {
+          row.push({});
+      }
+      canvasRows.push(row);
+  }
+  
+  // Change this line to match your folder structure
+  res.render('./pages/pixel-art', {
+      title: 'Pixel Art Creator',
+      canvasRows: canvasRows,
+      canvasNumber: roomId
+  });
+
+  let entered = false
+  io.on('connection', (socket) => {
+    if(entered === false){
+      designateRoom(socket,roomId);  // this function should only be called once per post request
+      entered = true;
+  }});
 });
 // *****************************************************
 // <!-- LAB 11 -->
@@ -291,37 +341,45 @@ function designateRoom(socket,newRoom)
   {
       console.log("NEW ROOM CREATED");
       socket.join(newRoom); //joining new room
-      //socket.rooms.add(newRoom);
       socketsToRooms.set(newRoom, [socket.id]);  //adding socket to room record
       console.log(socketsToRooms);
   }
   else
   {   //This loop is going to check to see if websocket is in room
       socket.join(newRoom);  //adding websocket to room
-      //socket.rooms.add(newRoom);
+      io.to(socket.id).emit("update all", rooms.get(newRoom));  //getting newly added websocket up to speed by 'pushing' the rooms record to it
       console.log("UPDATING LOG");
-      io.to(socket.id).emit("chat message", rooms.get(newRoom));  //getting newly added websocket up to speed by 'pushing' the rooms record to it
+
       socketsToRooms.get(newRoom).push(socket.id);  //adding websocket to room record
   }
 }
 // boradcasting message to the room/s that the socket is in. However sockets will only ever be in one room
 io.on('connection', (socket) => {
-    socket.on('chat message', (msg) => {
+    socket.on('update', (row, col, chosen_color, canvasHeight, canvasWidth, pixel) => {
 
         for(const roomName of socket.rooms)
         {
           if(roomName !== socket.id)
           {
-            console.log(`Chatting to room ${roomName}`);
+            console.log(`painting in room ${roomName}`);
             if(!rooms.has(roomName))
             {
-                rooms.set(roomName,[msg]); // adding message to message log
-                io.to(roomName).emit("chat message", [msg]);  //broadcasting message to everyone in room
+              const canvasData = [];
+              for (let i = 0; i < canvasHeight; i++) {
+                  const row = [];
+                  for (let j = 0; j < canvasWidth; j++) {
+                      row.push(0); // 0 means white/empty, 1 means black/filled
+                  }
+                  canvasData.push(row);
+              }
+              canvasData[row][col] = chosen_color;
+              rooms.set(roomName,canvasData); // adding message to message log
+              io.to(roomName).emit("update", row, col, chosen_color, pixel);  //broadcasting message to everyone in room
             }
             else
             {
-                rooms.get(roomName).push(msg);  //adding message to record
-                io.to(roomName).emit("chat message", [msg]);  //broadcasting message to everyone in room
+                rooms.get(roomName)[row][col] = chosen_color  //adding message to record
+                io.to(roomName).emit("update", row, col, chosen_color, pixel);  //broadcasting message to everyone in room
             }
             break;
           }
@@ -334,7 +392,9 @@ io.on("connection", socket => {
   socket.on("disconnecting", () => {
     for(const roomName of socket.rooms)
       {
+        io.to(socket.id).emit('save');
         roomOrganizer(socket,roomName);
+        console.log('User disconnected')
       }
   });
 });

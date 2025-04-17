@@ -1,15 +1,23 @@
 <div class="container">
+  <style>
+    <div>
+      font-family: 'Press Start 2P';font-size: 22px;
+    </div>
+  </style>
   <div class="row">
 
     <div class="col"></div>
 
     <div class="col">
       <div class="d-flex flex-column align-items-center">
-        <h1>Pixel Art Creator</h1>
 
-        <div class="controls">
+        <form class="pb-2">
+        <input id="artwork_name" placeholder="Untitled Artwork" width="400px"> 
+        </form>
+
+        <div class="d-flex align-items-center gap-3 pb-2">
           <button id="clear-btn">Clear Canvas</button>
-          <button id="save-btn">Save Art</button>
+          <button id="save-btn" type="submit">Save Art</button>
         </div>
       </div>
     </div>
@@ -32,6 +40,7 @@
 
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="module" src="/js/pixel-canvas.js"></script>
   <link rel="stylesheet" href="/css/pixel-canvas.css">
 </div>
