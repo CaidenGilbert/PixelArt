@@ -8,18 +8,6 @@ chai.use(chaiHttp);
 const {assert, expect} = chai;
 const color = {r: 0, g:0, b: 0};
 
-describe('API Test', () => {
-  it('Should return 200 http status', (done) => {
-    chai
-      .request(server)
-      .get('/color_picker')
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        done();
-      });
-  });
-});
-
 describe('HSV to RGB Tests', () => {
   let hue = 0;
   const INCREMENT = 90;

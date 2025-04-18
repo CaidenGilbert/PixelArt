@@ -1,4 +1,12 @@
 {{>message}}
 <div class="container">
-  <p> HOME </p>
+  <form class="py-2" action="/load_canvas" method="POST">
+    <input name="new_canvas" type="hidden" value="new_canvas">
+    <button type="submit">New Canvas</button>
+  </form>
+
+  <form action="/private_gallery" method="GET">
+    <input name="private_gallery" type="hidden" value="private_gallery">
+    <button type="submit">My Artwork</button>
+  </form>
 </div>

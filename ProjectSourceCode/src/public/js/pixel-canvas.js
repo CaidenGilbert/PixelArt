@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
     socket.on('update', function(row, col, chosen_color, pixel) {
       const pixels = document.querySelectorAll('.pixel');
       for (const pixel of pixels) {
@@ -107,4 +108,29 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     }
     window.addEventListener("beforeunload", () => {SaveArt()});
+});
+
+    const artwork_name = document.getElementById('artwork_name').value;
+    if (artwork_name) {
+      axios.get('/load_canvas')
+        .then( (res) => {
+          const artArray = res.data.properties.artArray;
+          const num_drawn_pixels = artArray.length;
+          // console.log(artArray);
+
+          for (let i = 0; i < num_drawn_pixels; i++) {
+            const x = artArray[i].position[0];
+            const y = artArray[i].position[1];
+
+            const pixel = document.querySelector(`[data-row="${y}"][data-col="${x}"]`);
+            // console.log(x, y, pixel);
+
+            pixel.style.backgroundColor = artArray[i].color;
+            pixel.style.borderColor = artArray[i].color;
+          }
+        })
+        .catch( (err) => {
+          console.log(err);
+        });
+    }
 });

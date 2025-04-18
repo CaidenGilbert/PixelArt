@@ -7,7 +7,8 @@ VALUES
 Insert INTO artwork
   (artwork_name, properties)
 VALUES
-  ('painting_name', '{"size": "720", "artArray": ["...","...","...","...."]}');
+  ('painting_name', '{"width":32, "height":32, "artArray": [{"position": [0, 0], "color":"#ff0000"},{"position": [0, 31], "color":"#ff0000"},{"position": [31, 0], "color":"#ff0000"},{"position": [31, 31], "color":"#ff0000"}]}'),
+  ('test', '{"width": 32, "height":32, "artArray": [{"position": [0, 0], "color":"#000000"}]}');
 
 INSERT INTO users_to_artwork
   (username, artwork)
