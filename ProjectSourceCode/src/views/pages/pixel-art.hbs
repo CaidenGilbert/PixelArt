@@ -1,42 +1,47 @@
-<div class="container">
-  <div class="row">
-
-    <div class="col"></div>
-
-    <div class="col">
-      <div class="d-flex flex-column align-items-center">
-        <h1>Pixel Art Creator</h1>
-
-        <div class="controls">
-          <button id="clear-btn">Clear Canvas</button>
-          <button id="save-btn">Save Art</button>
-        </div>
-      </div>
+<div class="container-fluid">
+  <!-- Title centered at the top -->
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <h2 class="mb-3">Pixel Art Creator</h2>
     </div>
-
-    <div class="col"></div>
-
   </div>
   
+  <!-- Controls centered below the title -->
+  <div class="row mb-3">
+    <div class="col-12 d-flex justify-content-center">
+      <div class="controls">
+        <button id="clear-btn" class="me-2">Clear Canvas</button>
+        <button id="save-btn">Save Art</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Main content row with color picker and canvas -->
   <div class="row">
-
-    <div class="col">
+    <!-- Empty space on left for alignment -->
+    <div class="col-md-3"></div>
+    
+    <!-- Color picker on left side -->
+    <div class="col-md-2">
       {{> color_picker}}
     </div>
 
-    <div class="col">
+    <!-- Canvas section -->
+    <div class="col-md-4">
       <form class="pb-2">
         {{#if saved_canvas}}
-          <input id="artwork_name" placeholder="Name" value="{{artwork_name}}"> 
+          <input id="artwork_name" placeholder="Name" value="{{artwork_name}}" class="form-control mb-2"> 
         {{else}}
-          <input id="artwork_name" placeholder="Name"> 
+          <input id="artwork_name" placeholder="Name" class="form-control mb-2"> 
         {{/if}}
       </form>
-      {{> pixel-canvas rows=canvasRows}}
+      <div class="d-flex justify-content-center">
+        {{> pixel-canvas rows=canvasRows}}
+      </div>
     </div>
-
-    <div class="col"></div>
-
+    
+    <!-- Empty space on right for alignment -->
+    <div class="col-md-3"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
