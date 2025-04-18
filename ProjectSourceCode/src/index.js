@@ -216,16 +216,17 @@ app.post('/save_canvas', async(req, res) => {
   const removeSpace = req.body.name.replace(/\s/g,"");
   if(user.username != undefined && removeSpace.length > 0)
   {
-  const searchForSameName = "select Count(*) from users left join users_to_artwork on username = username_id left join artwork on artwork_id = artwork.id where users.username = '"+user.username+"' AND artwork.artwork_name = '"+req.body.name+"';";
+  console.log("IN SAVE **************************");
+  const searchForSameName = "select Count(*) from users left join users_to_artwork on users.username = users_to_artwork.username left join artwork on artwork = artwork.artwork_id where users.username = '"+user.username+"' AND artwork.artwork_name = '"+req.body.name+"';";
   const countExistingArt = await db.any(searchForSameName);
   console.log("NAME COUNT: "+ countExistingArt[0].count);
   console.log("Name: "+ req.body.name + " "+ "Info: "+ req.body.properties+ " User: "+ user.username+ "|");
 
   if(countExistingArt[0].count == 1)
   {
-    const searchForArtId = "select artwork.id from users left join users_to_artwork on username = username_id left join artwork on artwork_id = artwork.id where users.username = '"+user.username+"' AND artwork.artwork_name = '"+req.body.name+"';";
+    const searchForArtId = "select artwork.artwork_id from users left join users_to_artwork on users.username = users_to_artwork.username left join artwork on artwork = artwork.artwork_id where users.username = '"+user.username+"' AND artwork.artwork_name = '"+req.body.name+"';";
     const getArtId = await db.any(searchForArtId);
-    const updateExistingQuery = "update artwork set properties = '"+JSON.stringify(req.body.properties)+"' where artwork.id = "+getArtId[0].id+";";
+    const updateExistingQuery = "update artwork set properties = '"+JSON.stringify(req.body.properties)+"' where artwork.artwork_id = "+getArtId[0].artwork_id+";";
     await db.none(updateExistingQuery);
   }
   else
@@ -238,7 +239,7 @@ app.post('/save_canvas', async(req, res) => {
         await db.none(query);
         const artworkPrimaryKey = 'select Count(*) from artwork;';
         const countArt = await db.any(artworkPrimaryKey);
-        const addLinkFromUserToArt = "insert into users_to_artwork(username_id,artwork_id) values ('"+user.username+"',"+countArt[0].count+");";
+        const addLinkFromUserToArt = "insert into users_to_artwork(username,artwork) values ('"+user.username+"',"+countArt[0].count+");";
         await db.none(addLinkFromUserToArt);
         res.status(204);
     }
@@ -259,8 +260,8 @@ app.get('/logout', (req, res) => {
     console.log("In LOGOUT");
     req.session.destroy( (err) => {
         res.render('./pages/logout',{username: user.username});
-        user.password = '';  // reseting pasword feild
-        user.username = '';  // reseting username feild
+        user.password = undefined;  // reseting pasword feild
+        user.username = undefined;  // reseting username feild
     });
   }
   else
