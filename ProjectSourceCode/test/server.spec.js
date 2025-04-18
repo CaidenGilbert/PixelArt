@@ -43,7 +43,7 @@ describe('Testing Add User API', () => {
         .send({username: 'John Doe', password: 'password'})
         .end((err, res) => {
           res.should.have.status(200);
-          res.should.redirectTo(/^.*127\.0\.0\.1.*\/login$/);
+          res.should.redirectTo(/^.*127\.0\.0\.1.*\/homeCanvas$/);
             done();
           });
     })
