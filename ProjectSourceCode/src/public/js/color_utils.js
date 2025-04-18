@@ -93,6 +93,12 @@ export function addClickEvents(preview_canvas, hue_slider_canvas, sv_slider_canv
   });
 }
 
+export function setChosenColor(color) {
+  if (color !== "") {
+    chosen_color = color;
+  }
+}
+
 /*
   formula taken from https://www.rapidtables.com/convert/color/hsv-to-rgb.html 
 */

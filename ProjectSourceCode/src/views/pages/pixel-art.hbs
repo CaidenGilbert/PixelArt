@@ -1,15 +1,26 @@
 <div class="container">
+  {{#if canvasNumber}}
+  <div>
+    <label for="roomInput" class="form-label">Exclusive_Canvas: {{canvasNumber}}</label>
+  </div>
+  {{/if}}
+  
   <div class="row">
 
     <div class="col"></div>
 
     <div class="col">
       <div class="d-flex flex-column align-items-center">
-        <h1>Pixel Art Creator</h1>
 
-        <div class="controls">
+        <form class="pb-2">
+        {{!-- {{ The following input has a script that prevents the enter button(keyCode = 13) from being pressed }} --}}
+
+        <input name="artworkName" placeholder="Untitled Artwork" onkeydown="if(event.keyCode === 13) {event.preventDefault()}">
+        </form>
+
+        <div class="d-flex align-items-center gap-3 pb-2">
           <button id="clear-btn">Clear Canvas</button>
-          <button id="save-btn">Save Art</button>
+          <button id="save-btn" type="submit">Save Art</button>
         </div>
       </div>
     </div>
@@ -21,7 +32,8 @@
   <div class="row">
 
     <div class="col">
-      {{> color_picker}}
+      {{> palette width=200 rows=paletteRows}}
+      {{> color_picker width=200}}
     </div>
 
     <div class="col">
@@ -38,9 +50,11 @@
     <div class="col"></div>
 
   </div>
-
+  
   <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+  <script type="module" src="/js/palette.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="module" src="/js/pixel-canvas.js"></script>
   <link rel="stylesheet" href="/css/pixel-canvas.css">
+
 </div>
