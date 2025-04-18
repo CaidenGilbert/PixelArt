@@ -1,13 +1,11 @@
 import { chosen_color } from "./color_utils.js";
-//var socket = io(); //Sockets should be linked to user session, may need to uncomment to test
 
 document.addEventListener('DOMContentLoaded', () => {
     // Canvas dimensions
-    const canvasWidth = 2;
-    const canvasHeight = 2;
+    const canvasWidth = 32;
+    const canvasHeight = 32;
     // Initialize the canvas data
     const canvasData = [];
-    console.log("Initializing");
     for (let i = 0; i < canvasHeight; i++) {
         const row = [];
         for (let j = 0; j < canvasWidth; j++) {
@@ -15,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         canvasData.push(row);
     }
+    let artName = '';
     // Add event listeners to pixels
     const pixels = document.querySelectorAll('.pixel');
     for (const pixel of pixels) {
@@ -49,15 +48,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function SaveArt()
     {
-      const artwork_name = document.getElementById('artwork_name').value;
       axios.post('/save_canvas', {
-          name: `${artwork_name}`,
+          name: `${artName}`,
           properties: {
               width: canvasWidth,
               height: canvasHeight,
               artArray: canvasData
           }
-    });
+        });
+        return true;
     }
     // Save button functionality
     const saveBtn = document.getElementById('save-btn');
@@ -97,8 +96,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    socket.on('save', function() 
-    {
-        SaveArt();
-    });
+    let inputs = document.getElementsByName("artworkName")
+    for (let i = 0; i < inputs.length; i++) {
+    inputs[i].onkeyup = function () {
+        if(this.value.match(/.+/))
+        {
+            console.log(this.value);
+            artName = this.value;
+        }
+    };
+    }
+    window.addEventListener("beforeunload", () => {SaveArt()});
 });
