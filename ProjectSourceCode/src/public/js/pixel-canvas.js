@@ -52,22 +52,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
-            // Create a representation of the pixel art
-            let artString = '';
-            for (let i = 0; i < canvasHeight; i++) {
-                for (let j = 0; j < canvasWidth; j++) {
-                    artString += canvasData[i][j] ? '■' : '□';
-                }
-                artString += '\n';
-            }
-            
-            // Output to console for now
-            console.log('Your pixel art:');
-            console.log(artString);
-            
-            // For a real implementation, you might want to convert this to an image
-            // or save it to local storage/server
-            alert('Pixel art saved to console!');
+          const node = document.getElementById('canvas-container');
+          htmlToImage.toPng(node, {canvasWidth: 200, canvasHeight: 200})
+            .then((dataURL) => {
+              axios.post('/save_thumbnail', {
+                image: dataURL,
+              })
+                .then((res) => {
+                  console.log(res);
+                })
+                .catch((err) => {
+                  console.log(err);   
+                });
+              })
+            .catch((err) => {
+              console.log(err);
+            });
         });
     }
 

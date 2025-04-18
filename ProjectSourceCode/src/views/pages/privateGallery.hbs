@@ -15,6 +15,9 @@
 
           <div class="card">
             <div class="card-body">
+              <img src="{{this.thumbnail}}">
+            </div>
+            <div class="card-title">
               <form action="/load_canvas" method="POST">
                 <input name="artwork_id" type="hidden" value="{{this.artwork_id}}">
                 <input name="artwork_name" type="hidden" value="{{this.artwork_name}}">

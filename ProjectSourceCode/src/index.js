@@ -206,10 +206,6 @@ app.post("/register", async (req,res) => {
 
 });
 
-app.get('/color_picker', (req, res) => {
-    res.render('./pages/color_picker.hbs');
-});
-
 app.get('/logout', (req, res) => {
     const saveUsername = user.username;
     req.session.destroy( (err) => {
@@ -228,6 +224,22 @@ app.get('/profile', (req, res) => {
   res.render('./pages/profile.hbs', {
     title: 'profile',
   });
+});
+
+app.post('/save_thumbnail', (req, res) => {
+  const query = `
+    UPDATE artwork
+    SET thumbnail = '${req.body.image}'
+    WHERE artwork_id = ${req.session.artwork_id};
+  `;
+  try {
+    db.none(query);
+    res.status(201);
+  }
+  catch (err) {
+    console.log(err);
+    res.status(400);
+  }
 });
     
 //add variable to save last room
