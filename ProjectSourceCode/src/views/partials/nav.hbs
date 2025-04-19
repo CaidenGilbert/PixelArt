@@ -34,9 +34,9 @@
         <!-- Center Content -->
         <div class="navbar-collapse collapse order-md-1">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item">
+            {{!-- <li class="nav-item">
               <a class="nav-link btn btn-outline-light border-white" href="/globalGallery" style="color: rgb(255, 255, 255);">Global Gallery</a>
-            </li>
+            </li> --}}
           </ul>
           
           <!-- Room Join Form -->
@@ -44,7 +44,7 @@
             <div class="form-group" id="roomArea">
               <label for="roomInput" class="form-label" style="color: rgb(255, 255, 255)">Join Canvas:</label>
               <input type="text" name="roomInput" class="form-control form-control-sm" placeholder="#..." id="roomInput">
-              <input type="submit" class="btn btn-primary btn-sm" value="Join">
+              <button type="submit" class="btn-sm">Join</button>
             </div>
           </form>
         </div>
@@ -57,7 +57,6 @@
                 Username
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="/profile">Profile</a></li>
                 <li><a class="dropdown-item" href="/private_gallery">Private Gallery</a></li>
                 <li><a class="dropdown-item" href="/logout">Logout</a></li>
               </ul>
