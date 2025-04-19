@@ -11,8 +11,10 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      ::placeholder {
+        color: black;
+      }
     }
-    
     .brand-name {
       font-weight: bold;
       font-size: 2rem;
@@ -50,11 +52,12 @@
         </div>
         
         <!-- Right Side - Dropdown Menu -->
+        {{#if username}}
         <div class="navbar-collapse collapse order-md-2">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Username
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
+                {{username}}
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="/private_gallery">Private Gallery</a></li>
@@ -63,6 +66,20 @@
             </li>
           </ul>
         </div>
+        {{else}}
+         <div class="navbar-collapse collapse order-md-2">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
+                Login
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/login">Login</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        {{/if}}
       </nav>
    </div>
 </header>

@@ -1,21 +1,38 @@
 <div class="container">
-  {{#if canvasNumber}}
-  <div>
-    <label for="roomInput" class="form-label">Canvas: {{canvasNumber}}</label>
-  </div>
-  {{/if}}
-  
-  <div class="row">
+  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    .row {
+      font-family: 'Press Start 2P', sans-serif !important;
+      padding-left: 1rem;
+      padding-right: 1rem;
+       button {
+        padding: 8px 16px;
+        margin: 0 5px;
+        background-color: #5822d4;
+        color: rgb(255, 255, 255);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+  </style>
 
+  <div class="row">
+    {{#if canvasNumber}}
+      <div>
+        <label for="roomInput" class="form-label">Exclusive_Canvas: {{canvasNumber}}</label>
+      </div>
+    {{/if}}
     <div class="col"></div>
 
     <div class="col">
       <div class="d-flex flex-column align-items-center">
-
         <form class="pb-2">
         {{!-- {{ The following input has a script that prevents the enter button(keyCode = 13) from being pressed }} --}}
-
-        <input name="artworkName" placeholder="Untitled Artwork" onkeydown="if(event.keyCode === 13) {event.preventDefault()}">
+        {{#if saved_canvas}}
+           <input name="artworkName" value="{{artwork_name}}" font-family="'Press Start 2P', sans-serif !important;" onkeydown="if(event.keyCode === 13) {event.preventDefault()}">
+        {{else}}
+          <input name="artworkName" placeholder="Untitled Artwork" font-family="'Press Start 2P', sans-serif !important;" onkeydown="if(event.keyCode === 13) {event.preventDefault()}">
+        {{/if}}
         </form>
 
         <div class="d-flex align-items-center gap-3 pb-2">
@@ -37,13 +54,6 @@
     </div>
 
     <div class="col">
-      <form class="pb-2">
-        {{#if saved_canvas}}
-          <input id="artwork_name" placeholder="Name" value="{{artwork_name}}"> 
-        {{else}}
-          <input id="artwork_name" placeholder="Name"> 
-        {{/if}}
-      </form>
       {{> pixel-canvas rows=canvasRows}}
     </div>
 

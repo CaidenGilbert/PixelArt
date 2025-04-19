@@ -1,4 +1,4 @@
-import { chosen_color } from "./color_utils.js";
+import { chosen_color, rgbToHex } from "./color_utils.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     // Canvas dimensions
@@ -50,14 +50,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function SaveArt() {
-        axios.post('/save_canvas', {
-            name: `${artName}`,
-            properties: {
-                width: canvasWidth,
-                height: canvasHeight,
-                artArray: canvasData
+    function SaveArt()
+    {
+        //*******************************************************experimental*********************** */
+        const artwork_data = [];
+
+        for (let i = 0; i < canvasHeight; i++) {
+            for (let j = 0; j < canvasWidth; j++) {
+              if (canvasData[i][j]) {
+                  artwork_data.push({
+                      position: [j, i],
+                      color: rgbToHex(pixels[j + (i * canvasWidth)].style.backgroundColor)
+                  });
+              }
             }
+        }
+        //*******************************************************experimental*********************** */
+      axios.post('/save_canvas', {
+          name: `${artName}`,
+          properties: {
+              width: canvasWidth,
+              height: canvasHeight,
+              artArray: artwork_data
+          }
         });
         return true;
     }
@@ -122,13 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    window.addEventListener("beforeunload", () => {
+    window.addEventListener("beforeunload", async() => {
+        console.log("SAVING");
         SaveArt();
     });
 
     // This part was outside the DOMContentLoaded block — moved it in here
-    const artwork_name = document.getElementById('artwork_name').value;
-    if (artwork_name) {
+    if (artName) {
         axios.get('/load_canvas')
             .then((res) => {
                 const artArray = res.data.properties.artArray;

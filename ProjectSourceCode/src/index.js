@@ -85,28 +85,28 @@ app.get("/",(req,res) =>
 {
   if(req.session.user)
   {
-    res.render("./pages/altLogin", { message: `Already logged in as, ${user.username}` } );
+    res.render("./pages/altLogin", { message: `Already logged in as, ${user.username}` , username: user.username} );
   }
   else
   {
-    res.render("./pages/login",{});
+    res.render("./pages/login",{username: user.username});
   }
 });
 
 app.get("/homeCanvas", (req, res) => 
 {
-    res.render("./pages/homeCanvas");
+    res.render("./pages/homeCanvas",{username: user.username});
 });
 
 app.get("/login", (req, res) => 
 {
   if(req.session.user)
   {
-    res.render("./pages/altLogin",{ message: `Already logged in as, ${user.username}` } );
+    res.render("./pages/altLogin",{ message: `Already logged in as, ${user.username}` , username: user.username} );
   }
   else
   {
-    res.render("./pages/login",{});
+    res.render("./pages/login",{username: user.username});
   }
 });
 
@@ -138,6 +138,7 @@ app.get('/pixel-art', async(req, res) => {
   {
     console.log('Pixel art route accessed!');
 
+      console.dir(paletteHeight,paletteRows,canvasHeight,canvasRows)
       res.render('./pages/pixel-art', {
       title: 'Pixel Art Creator',
       canvasRows: canvasRows,
@@ -145,11 +146,12 @@ app.get('/pixel-art', async(req, res) => {
       saved_canvas: req.session.saved_canvas,
       artwork_id: req.session.artwork_id,
       artwork_name: req.session.artwork_name,
+      username: user.username
   });
   }
   else
   {
-    res.render("./pages/login",{});
+    res.render("./pages/login",{username: user.username});
     console.log('in else statement')
   }
 
@@ -175,7 +177,7 @@ try
     }
     else
     {
-      res.status(400).render("./pages/login",{message:"Incorrect username or password"});
+      res.status(400).render("./pages/login",{message:"Incorrect username or password",username: user.username});
     }
 }
 catch(err)
@@ -187,7 +189,7 @@ catch(err)
 
 app.get("/register", (req, res) => 
 {
-  res.render("./pages/register",{});
+  res.render("./pages/register",{username: user.username});
 });
 
 app.post("/register", async (req,res) => {
@@ -213,12 +215,12 @@ app.post("/register", async (req,res) => {
     }
     else
     {
-      res.status(400).render("./pages/register",{message:"Invalid Username"});
+      res.status(400).render("./pages/register",{message:"Invalid Username",username: user.username});
     }
   }
   catch(err)
   {
-    res.status(400).render("./pages/register",{message: "Username is not valid"});
+    res.status(400).render("./pages/register",{message: "Username is not valid",username: user.username});
   }
 
 });
@@ -279,20 +281,22 @@ app.get('/logout', (req, res) => {
   }
   else
   {
-    res.render("./pages/login",{});
+    res.render("./pages/login",{username: user.username});
   }
 });
 
 app.get('/globalGallery', (req, res) => {
   res.render('./pages/globalGallery.hbs', {
     title: 'Global Gallery',
-    artworks: []
+    artworks: [],
+    username: user.username
   });
 });
 
 app.get('/profile', (req, res) => {
   res.render('./pages/profile.hbs', {
     title: 'profile',
+    username: user.username
   });
 });
 
@@ -327,7 +331,7 @@ app.post("/canvas", async(req, res) => {
       const paletteRows = [];
       const paletteWidth = 5;
       const paletteHeight = 5;
-
+    
       for (let i = 0; i < canvasHeight; i++) {
         const row = [];
         for (let j = 0; j < canvasWidth; j++) {
@@ -335,7 +339,7 @@ app.post("/canvas", async(req, res) => {
         }
         canvasRows.push(row);
       }
-
+    
       for (let i = 0; i < paletteHeight; i++) {
         const row = [];
         for (let j = 0; j < paletteWidth; j++) {
@@ -343,17 +347,28 @@ app.post("/canvas", async(req, res) => {
         }
         paletteRows.push(row);
       }
-      
-      // Change this line to match your folder structure
-      res.render('./pages/pixel-art', {
-      title: 'Pixel Art Creator',
-      canvasRows: canvasRows,
-      canvasNumber: roomId,
-      paletteRows: paletteRows,
-      saved_canvas: req.session.saved_canvas,
-      artwork_id: req.session.artwork_id,
-      artwork_name: req.session.artwork_name,
+    
+      if(req.session.user)
+      {
+        console.log('Pixel art route accessed!');
+    
+          console.dir(paletteHeight,paletteRows,canvasHeight,canvasRows)
+          res.render('./pages/pixel-art', {
+          title: 'Pixel Art Creator',
+          canvasRows: canvasRows,
+          paletteRows: paletteRows,
+          saved_canvas: req.session.saved_canvas,
+          artwork_id: req.session.artwork_id,
+          artwork_name: req.session.artwork_name,
+          username: user.username,
+          canvasNumber: roomId
       });
+      }
+      else
+      {
+        res.render("./pages/login",{username: user.username});
+        console.log('in else statement')
+      }
     
       // when entering a room, the new websocket either should create a now room or get updated on all changes in existing room
       let entered = false
@@ -365,7 +380,7 @@ app.post("/canvas", async(req, res) => {
     }
     else
     {
-      res.render("./pages/login",{});
+      res.render("./pages/login",{username: user.username});
     }
 });
 // *****************************************************
@@ -411,11 +426,13 @@ app.get('/private_gallery', async (req, res) => {
 
         res.status(200).render('./pages/privateGallery.hbs', {
             artworks: split_results,
+            username: user.username
         });
     }
     catch (err) {
         res.status(404).render('./pages/privateGallery.hbs', {
             artworks: [],
+            username: user.username
         });
     }
 });
@@ -428,6 +445,7 @@ app.post('/load_canvas', (req, res) => {
         req.session.artwork_name = "";
     }
     else {
+        console.log("IN Existing canvas");
         req.session.saved_canvas = true;
         req.session.artwork_id = req.body.artwork_id;
         req.session.artwork_name = req.body.artwork_name;
@@ -437,6 +455,7 @@ app.post('/load_canvas', (req, res) => {
 });
 
 app.get('/load_canvas', async (req, res) => {
+    console.log("PULLING FROM DB")
     const query = `
         WITH user_artwork_ids AS (
           SELECT artwork FROM users_to_artwork
@@ -453,6 +472,7 @@ app.get('/load_canvas', async (req, res) => {
 
     try {
         const result = await db.one(query);
+        res.status(200).redirect('/pixel-art')
         console.dir(result, {depth: null});
         res.status(200).send(result);
     }
