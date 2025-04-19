@@ -138,7 +138,6 @@ app.get('/pixel-art', async(req, res) => {
   {
     console.log('Pixel art route accessed!');
 
-      console.dir(paletteHeight,paletteRows,canvasHeight,canvasRows)
       res.render('./pages/pixel-art', {
       title: 'Pixel Art Creator',
       canvasRows: canvasRows,
@@ -325,6 +324,25 @@ app.post("/canvas", async(req, res) => {
       const canvasRows = [];
       const canvasWidth = 32;
       const canvasHeight = 32;
+      const paletteRows = [];
+      const paletteWidth = 5;
+      const paletteHeight = 5;
+
+      for (let i = 0; i < canvasHeight; i++) {
+        const row = [];
+        for (let j = 0; j < canvasWidth; j++) {
+            row.push({});
+        }
+        canvasRows.push(row);
+      }
+
+      for (let i = 0; i < paletteHeight; i++) {
+        const row = [];
+        for (let j = 0; j < paletteWidth; j++) {
+            row.push({});
+        }
+        paletteRows.push(row);
+      }
       
       for (let i = 0; i < canvasHeight; i++) {
           const row = [];
@@ -336,9 +354,13 @@ app.post("/canvas", async(req, res) => {
       
       // Change this line to match your folder structure
       res.render('./pages/pixel-art', {
-          title: 'Pixel Art Creator',
-          canvasRows: canvasRows,
-          canvasNumber: roomId
+      title: 'Pixel Art Creator',
+      canvasRows: canvasRows,
+      canvasNumber: roomId,
+      paletteRows: paletteRows,
+      saved_canvas: req.session.saved_canvas,
+      artwork_id: req.session.artwork_id,
+      artwork_name: req.session.artwork_name,
       });
     
       // when entering a room, the new websocket either should create a now room or get updated on all changes in existing room
