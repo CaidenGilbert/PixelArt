@@ -314,7 +314,7 @@ app.post('/save_thumbnail', (req, res) => {
     
 //add variable to save last room
 
-app.post("/canvas", async(req, res) => { //cunt
+app.post("/canvas", async(req, res) => {
   if(true) // change to req.session.user on production version
     {
       console.log("---------------------------------------------------");
