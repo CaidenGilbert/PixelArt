@@ -14,7 +14,9 @@ John will work on saving pixel art as JSON files
 Conrad will adapt websocket to work with pixel art and not just chatting
 
 Davion did not attend this meeting and someone needs to follow up with him to see what work he has done
+
 **4/18/25**
+
 *The main parts of this meeting*
 **Hard Deadline on Sunday At 5pm**
 1) Caiden -> overhaul the home page. center buttons and make side by side. Add a backround with with project name init.
