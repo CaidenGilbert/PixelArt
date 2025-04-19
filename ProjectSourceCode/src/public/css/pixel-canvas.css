@@ -50,17 +50,10 @@ button:hover {
     transition: background-color 0.1s;
 }
 
-.palette {
-  width: 40px;
-  height: 40px;
-  background-color: white;
-  cursor: pointer;
-  transition: background-color 0.1;
-}
-
 @font-face {
     font-family: 'Press Start 2P';
     src: url('/css/PressStart2P-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
-}
+  }
+  
