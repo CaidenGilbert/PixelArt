@@ -344,14 +344,6 @@ app.post("/canvas", async(req, res) => {
         paletteRows.push(row);
       }
       
-      for (let i = 0; i < canvasHeight; i++) {
-          const row = [];
-          for (let j = 0; j < canvasWidth; j++) {
-              row.push({});
-          }
-          canvasRows.push(row);
-      }
-      
       // Change this line to match your folder structure
       res.render('./pages/pixel-art', {
       title: 'Pixel Art Creator',
