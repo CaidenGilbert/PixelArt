@@ -1,9 +1,11 @@
-import { chosen_color } from "./color_utils.js";
+import { chosen_color, rgbToHex } from "./color_utils.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     // Canvas dimensions
     const canvasWidth = 32;
     const canvasHeight = 32;
+    let artwork_data = [];
+    let artName = '';
 
     // Initialize the canvas data
     const canvasData = [];
@@ -14,8 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         canvasData.push(row);
     }
-
-    let artName = '';
 
     // Add event listeners to pixels
     const pixels = document.querySelectorAll('.pixel');
@@ -50,14 +50,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function SaveArt() {
-        axios.post('/save_canvas', {
-            name: `${artName}`,
-            properties: {
-                width: canvasWidth,
-                height: canvasHeight,
-                artArray: canvasData
+    function preSave(artArray)
+    {
+        artwork_data = artArray;
+    }
+
+    async function SaveArt()
+    {
+        //*******************************************************experimental*********************** */
+        alert("SAVING");
+        for (let i = 0; i < canvasHeight; i++) {
+            for (let j = 0; j < canvasWidth; j++) {
+              if (canvasData[i][j]) {
+                  artwork_data.push({
+                      position: [j, i],
+                      color: rgbToHex(pixels[j + (i * canvasWidth)].style.backgroundColor)
+                  });
+              }
             }
+        }
+        
+        //*******************************************************experimental*********************** */
+      if (artName == '')
+      {
+        artName = document.getElementById('theName').value
+      }
+      await axios.post('/save_canvas', {
+          name: `${artName}`,
+          properties: {
+              width: canvasWidth,
+              height: canvasHeight,
+              artArray: artwork_data
+          }
         });
         return true;
     }
@@ -65,25 +89,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save button functionality
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {
-        saveBtn.addEventListener('click', () => {
+        saveBtn.addEventListener('click', async() => {
             const node = document.getElementById('canvas-container');
-            htmlToImage.toPng(node, { canvasWidth: 200, canvasHeight: 200 })
-                .then((dataURL) => {
-                    axios.post('/save_thumbnail', {
-                        image: dataURL,
-                    })
-                    .then((res) => {
-                        console.log(res);
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
+            await htmlToImage.toPng(node, {canvasWidth: 200, canvasHeight: 200})
+            .then((dataURL) => {
+                axios.post('/save_thumbnail', {
+                image: dataURL,
+                })
+                .then((res) => {
+                    console.log(res);
                 })
                 .catch((err) => {
-                    console.log(err);
+                    console.log(err);   
                 });
-
-            SaveArt();
+                })
+            .catch((err) => {
+                console.log(err);
+            });
+            await SaveArt();
         });
     }
 
@@ -122,31 +145,31 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    window.addEventListener("beforeunload", () => {
-        SaveArt();
+    window.addEventListener("beforeunload", async() => {
+        console.log("SAVING");
+        await SaveArt();
     });
 
-    // This part was outside the DOMContentLoaded block — moved it in here
-    const artwork_name = document.getElementById('artwork_name').value;
-    if (artwork_name) {
-        axios.get('/load_canvas')
-            .then((res) => {
-                const artArray = res.data.properties.artArray;
-                const num_drawn_pixels = artArray.length;
+// This part was outside the DOMContentLoaded block — moved it in here
 
-                for (let i = 0; i < num_drawn_pixels; i++) {
-                    const x = artArray[i].position[0];
-                    const y = artArray[i].position[1];
+axios.get('/load_canvas')
+    .then((res) => {
+        const artArray = res.data.properties.artArray;
+        preSave(artArray);
+        const num_drawn_pixels = artArray.length;
 
-                    const pixel = document.querySelector(`[data-row="${y}"][data-col="${x}"]`);
-                    if (pixel) {
-                        pixel.style.backgroundColor = artArray[i].color;
-                        pixel.style.borderColor = artArray[i].color;
-                    }
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }
+        for (let i = 0; i < num_drawn_pixels; i++) {
+            const x = artArray[i].position[0];
+            const y = artArray[i].position[1];
+
+            const pixel = document.querySelector(`[data-row="${y}"][data-col="${x}"]`);
+            if (pixel) {
+                pixel.style.backgroundColor = artArray[i].color;
+                pixel.style.borderColor = artArray[i].color;
+            }
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+    });
 });
