@@ -55,26 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
         artwork_data = artArray;
     }
 
-    function SaveArt()
+    async function SaveArt()
     {
-        const node = document.getElementById('canvas-container');
-        htmlToImage.toPng(node, { canvasWidth: 200, canvasHeight: 200 })
-            .then((dataURL) => {
-                axios.post('/save_thumbnail', {
-                    image: dataURL,
-                })
-                .then((res) => {
-                    console.log(res);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-            })
-            .catch((err) => {
-                console.log(err);
-            });
         //*******************************************************experimental*********************** */
-
+        alert("SAVING");
         for (let i = 0; i < canvasHeight; i++) {
             for (let j = 0; j < canvasWidth; j++) {
               if (canvasData[i][j]) {
@@ -85,8 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
               }
             }
         }
+        
         //*******************************************************experimental*********************** */
-      axios.post('/save_canvas', {
+      if (artName == '')
+      {
+        artName = document.getElementById('theName').value
+      }
+      await axios.post('/save_canvas', {
           name: `${artName}`,
           properties: {
               width: canvasWidth,
@@ -100,8 +89,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save button functionality
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {
-        saveBtn.addEventListener('click', () => {
-            SaveArt();
+        saveBtn.addEventListener('click', async() => {
+            const node = document.getElementById('canvas-container');
+            await htmlToImage.toPng(node, {canvasWidth: 200, canvasHeight: 200})
+            .then((dataURL) => {
+                axios.post('/save_thumbnail', {
+                image: dataURL,
+                })
+                .then((res) => {
+                    console.log(res);
+                })
+                .catch((err) => {
+                    console.log(err);   
+                });
+                })
+            .catch((err) => {
+                console.log(err);
+            });
+            await SaveArt();
         });
     }
 
@@ -141,7 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener("beforeunload", async() => {
-        SaveArt();
+        console.log("SAVING");
+        await SaveArt();
     });
 
 // This part was outside the DOMContentLoaded block — moved it in here

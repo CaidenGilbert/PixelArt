@@ -29,7 +29,7 @@
         <form class="pb-2">
         {{!-- {{ The following input has a script that prevents the enter button(keyCode = 13) from being pressed }} --}}
         {{#if saved_canvas}}
-           <input name="artworkName" value="{{artwork_name}}" font-family="'Press Start 2P', sans-serif !important;" onkeydown="if(event.keyCode === 13) {event.preventDefault()}">
+           <input name="artworkName" id = "theName" value="{{artwork_name}}" font-family="'Press Start 2P', sans-serif !important;" onkeydown="if(event.keyCode === 13) {event.preventDefault()}">
         {{else}}
           <input name="artworkName" placeholder="Untitled Artwork" font-family="'Press Start 2P', sans-serif !important;" onkeydown="if(event.keyCode === 13) {event.preventDefault()}">
         {{/if}}

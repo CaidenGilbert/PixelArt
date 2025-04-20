@@ -233,6 +233,7 @@ app.post("/register", async (req,res) => {
 app.post('/save_canvas', async(req, res) => {
   
   const removeSpace = req.body.name.replace(/\s/g,"");
+  console.log("Username" + user.username + " "+ "Name "+ removeSpace);
   if(user.username != undefined && removeSpace.length > 0)
   {
   console.log("IN SAVE **************************");
@@ -274,7 +275,7 @@ app.get('/logout', (req, res) => {
   {
     console.log("In LOGOUT");
     req.session.destroy( (err) => {
-        res.render('./pages/logout',{username: user.username});
+        res.render('./pages/logout',{Loggedout: user.username});
         user.password = undefined;  // reseting pasword feild
         user.username = undefined;  // reseting username feild
     });
