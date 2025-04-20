@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Canvas dimensions
     const canvasWidth = 32;
     const canvasHeight = 32;
+    let artwork_data = [];
+    let artName = '';
 
     // Initialize the canvas data
     const canvasData = [];
@@ -14,8 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         canvasData.push(row);
     }
-
-    let artName = '';
 
     // Add event listeners to pixels
     const pixels = document.querySelectorAll('.pixel');
@@ -50,6 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function preSave(artArray)
+    {
+        artwork_data = artArray;
+    }
+
     function SaveArt()
     {
         const node = document.getElementById('canvas-container');
@@ -69,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(err);
             });
         //*******************************************************experimental*********************** */
-        const artwork_data = [];
 
         for (let i = 0; i < canvasHeight; i++) {
             for (let j = 0; j < canvasWidth; j++) {
@@ -140,25 +144,26 @@ document.addEventListener('DOMContentLoaded', () => {
         SaveArt();
     });
 
-    // This part was outside the DOMContentLoaded block — moved it in here
-        console.log("hello****************");
-        axios.get('/load_canvas')
-            .then((res) => {
-                const artArray = res.properties.artArray;
-                const num_drawn_pixels = artArray.length;
+// This part was outside the DOMContentLoaded block — moved it in here
 
-                for (let i = 0; i < num_drawn_pixels; i++) {
-                    const x = artArray[i].position[0];
-                    const y = artArray[i].position[1];
+axios.get('/load_canvas')
+    .then((res) => {
+        const artArray = res.data.properties.artArray;
+        preSave(artArray);
+        const num_drawn_pixels = artArray.length;
 
-                    const pixel = document.querySelector(`[data-row="${y}"][data-col="${x}"]`);
-                    if (pixel) {
-                        pixel.style.backgroundColor = artArray[i].color;
-                        pixel.style.borderColor = artArray[i].color;
-                    }
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        for (let i = 0; i < num_drawn_pixels; i++) {
+            const x = artArray[i].position[0];
+            const y = artArray[i].position[1];
+
+            const pixel = document.querySelector(`[data-row="${y}"][data-col="${x}"]`);
+            if (pixel) {
+                pixel.style.backgroundColor = artArray[i].color;
+                pixel.style.borderColor = artArray[i].color;
+            }
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+    });
 });

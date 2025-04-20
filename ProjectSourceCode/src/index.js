@@ -438,50 +438,44 @@ app.get('/private_gallery', async (req, res) => {
 });
 
 app.post('/load_canvas', (req, res) => {
-    console.log("NUMBER 1:"+req.body);
-    if ("new_canvas" in req.body) {
-        req.session.saved_canvas = false;
-        req.session.artwork_id = -1;
-        req.session.artwork_name = "";
-    }
-    else {
-        console.log("IN Existing canvas");
-        req.session.saved_canvas = true;
-        req.session.artwork_id = req.body.artwork_id;
-        req.session.artwork_name = req.body.artwork_name;
-    }
+  console.log(req.body);
+  if ("new_canvas" in req.body) {
+      req.session.saved_canvas = false;
+      req.session.artwork_id = -1;
+      req.session.artwork_name = "";
+  }
+  else {
+      req.session.saved_canvas = true;
+      req.session.artwork_id = req.body.artwork_id;
+      req.session.artwork_name = req.body.artwork_name;
+  }
 
-    res.status(200).redirect('/pixel-art')
+  res.status(200).redirect('/pixel-art')
 });
 
 app.get('/load_canvas', async (req, res) => {
-    console.log("NUMBER 2:"+req.bodyParser);
-    console.log("PULLING FROM DB")
-    const query = `
-        WITH user_artwork_ids AS (
-          SELECT artwork FROM users_to_artwork
-          WHERE username = '${req.session.user.username}'
-        ),
-        user_artworks AS (
-          SELECT * 
-          FROM artwork INNER JOIN user_artwork_ids
-          ON artwork.artwork_id = user_artwork_ids.artwork
-        )
-        SELECT * FROM user_artworks
-        WHERE user_artworks.artwork_id = '${req.session.artwork_id}';
-    `;
+  const query = `
+      WITH user_artwork_ids AS (
+        SELECT artwork FROM users_to_artwork
+        WHERE username = '${req.session.user.username}'
+      ),
+      user_artworks AS (
+        SELECT * 
+        FROM artwork INNER JOIN user_artwork_ids
+        ON artwork.artwork_id = user_artwork_ids.artwork
+      )
+      SELECT * FROM user_artworks
+      WHERE user_artworks.artwork_id = '${req.session.artwork_id}';
+  `;
 
-    try {
-        console.log(query);
-        console.log("***********************************************");
-        const result = await db.one(query);
-        console.dir(result);
-        res.status(200).redirect('/pixel-art')
-        res.status(200).send(result.properties);
-    }
-    catch (err) {
-        res.status(400);
-    }
+  try {
+      const result = await db.one(query);
+      console.dir(result, {depth: null});
+      res.status(200).send(result);
+  }
+  catch (err) {
+      res.status(400);
+  }
 });
 
 const rooms = new Map();
