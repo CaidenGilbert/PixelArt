@@ -85,28 +85,28 @@ app.get("/",(req,res) =>
 {
   if(req.session.user)
   {
-    res.render("./pages/altLogin", { message: `Already logged in as, ${user.username}` } );
+    res.render("./pages/altLogin", { message: `Already logged in as, ${user.username}` , username: user.username} );
   }
   else
   {
-    res.render("./pages/login",{});
+    res.render("./pages/login",{username: user.username});
   }
 });
 
 app.get("/homeCanvas", (req, res) => 
 {
-    res.render("./pages/homeCanvas");
+    res.render("./pages/homeCanvas",{username: user.username});
 });
 
 app.get("/login", (req, res) => 
 {
   if(req.session.user)
   {
-    res.render("./pages/altLogin",{ message: `Already logged in as, ${user.username}` } );
+    res.render("./pages/altLogin",{ message: `Already logged in as, ${user.username}` , username: user.username} );
   }
   else
   {
-    res.render("./pages/login",{});
+    res.render("./pages/login",{username: user.username});
   }
 });
 
@@ -138,6 +138,7 @@ app.get('/pixel-art', async(req, res) => {
   {
     console.log('Pixel art route accessed!');
 
+      console.dir(paletteHeight,paletteRows,canvasHeight,canvasRows)
       res.render('./pages/pixel-art', {
       title: 'Pixel Art Creator',
       canvasRows: canvasRows,
@@ -145,11 +146,12 @@ app.get('/pixel-art', async(req, res) => {
       saved_canvas: req.session.saved_canvas,
       artwork_id: req.session.artwork_id,
       artwork_name: req.session.artwork_name,
+      username: user.username
   });
   }
   else
   {
-    res.render("./pages/login",{});
+    res.render("./pages/login",{username: user.username});
     console.log('in else statement')
   }
 
@@ -175,7 +177,7 @@ try
     }
     else
     {
-      res.status(400).render("./pages/login",{message:"Incorrect username or password"});
+      res.status(400).render("./pages/login",{message:"Incorrect username or password",username: user.username});
     }
 }
 catch(err)
@@ -187,7 +189,7 @@ catch(err)
 
 app.get("/register", (req, res) => 
 {
-  res.render("./pages/register",{});
+  res.render("./pages/register",{username: user.username});
 });
 
 app.post("/register", async (req,res) => {
@@ -213,12 +215,12 @@ app.post("/register", async (req,res) => {
     }
     else
     {
-      res.status(400).render("./pages/register",{message:"Invalid Username"});
+      res.status(400).render("./pages/register",{message:"Invalid Username",username: user.username});
     }
   }
   catch(err)
   {
-    res.status(400).render("./pages/register",{message: "Username is not valid"});
+    res.status(400).render("./pages/register",{message: "Username is not valid",username: user.username});
   }
 
 });
@@ -231,6 +233,7 @@ app.post("/register", async (req,res) => {
 app.post('/save_canvas', async(req, res) => {
   
   const removeSpace = req.body.name.replace(/\s/g,"");
+  console.log("Username" + user.username + " "+ "Name "+ removeSpace);
   if(user.username != undefined && removeSpace.length > 0)
   {
   console.log("IN SAVE **************************");
@@ -272,27 +275,29 @@ app.get('/logout', (req, res) => {
   {
     console.log("In LOGOUT");
     req.session.destroy( (err) => {
-        res.render('./pages/logout',{username: user.username});
+        res.render('./pages/logout',{Loggedout: user.username});
         user.password = undefined;  // reseting pasword feild
         user.username = undefined;  // reseting username feild
     });
   }
   else
   {
-    res.render("./pages/login",{});
+    res.render("./pages/login",{username: user.username});
   }
 });
 
 app.get('/globalGallery', (req, res) => {
   res.render('./pages/globalGallery.hbs', {
     title: 'Global Gallery',
-    artworks: []
+    artworks: [],
+    username: user.username
   });
 });
 
 app.get('/profile', (req, res) => {
   res.render('./pages/profile.hbs', {
     title: 'profile',
+    username: user.username
   });
 });
 
@@ -327,7 +332,7 @@ app.post("/canvas", async(req, res) => {
       const paletteRows = [];
       const paletteWidth = 5;
       const paletteHeight = 5;
-
+    
       for (let i = 0; i < canvasHeight; i++) {
         const row = [];
         for (let j = 0; j < canvasWidth; j++) {
@@ -335,7 +340,7 @@ app.post("/canvas", async(req, res) => {
         }
         canvasRows.push(row);
       }
-
+    
       for (let i = 0; i < paletteHeight; i++) {
         const row = [];
         for (let j = 0; j < paletteWidth; j++) {
@@ -343,17 +348,28 @@ app.post("/canvas", async(req, res) => {
         }
         paletteRows.push(row);
       }
-      
-      // Change this line to match your folder structure
-      res.render('./pages/pixel-art', {
-      title: 'Pixel Art Creator',
-      canvasRows: canvasRows,
-      canvasNumber: roomId,
-      paletteRows: paletteRows,
-      saved_canvas: req.session.saved_canvas,
-      artwork_id: req.session.artwork_id,
-      artwork_name: req.session.artwork_name,
+    
+      if(req.session.user)
+      {
+        console.log('Pixel art route accessed!');
+    
+          console.dir(paletteHeight,paletteRows,canvasHeight,canvasRows)
+          res.render('./pages/pixel-art', {
+          title: 'Pixel Art Creator',
+          canvasRows: canvasRows,
+          paletteRows: paletteRows,
+          saved_canvas: req.session.saved_canvas,
+          artwork_id: req.session.artwork_id,
+          artwork_name: req.session.artwork_name,
+          username: user.username,
+          canvasNumber: roomId
       });
+      }
+      else
+      {
+        res.render("./pages/login",{username: user.username});
+        console.log('in else statement')
+      }
     
       // when entering a room, the new websocket either should create a now room or get updated on all changes in existing room
       let entered = false
@@ -365,7 +381,7 @@ app.post("/canvas", async(req, res) => {
     }
     else
     {
-      res.render("./pages/login",{});
+      res.render("./pages/login",{username: user.username});
     }
 });
 // *****************************************************
@@ -411,54 +427,56 @@ app.get('/private_gallery', async (req, res) => {
 
         res.status(200).render('./pages/privateGallery.hbs', {
             artworks: split_results,
+            username: user.username
         });
     }
     catch (err) {
         res.status(404).render('./pages/privateGallery.hbs', {
             artworks: [],
+            username: user.username
         });
     }
 });
 
 app.post('/load_canvas', (req, res) => {
-    console.log(req.body);
-    if ("new_canvas" in req.body) {
-        req.session.saved_canvas = false;
-        req.session.artwork_id = -1;
-        req.session.artwork_name = "";
-    }
-    else {
-        req.session.saved_canvas = true;
-        req.session.artwork_id = req.body.artwork_id;
-        req.session.artwork_name = req.body.artwork_name;
-    }
+  console.log(req.body);
+  if ("new_canvas" in req.body) {
+      req.session.saved_canvas = false;
+      req.session.artwork_id = -1;
+      req.session.artwork_name = "";
+  }
+  else {
+      req.session.saved_canvas = true;
+      req.session.artwork_id = req.body.artwork_id;
+      req.session.artwork_name = req.body.artwork_name;
+  }
 
-    res.status(200).redirect('/pixel-art')
+  res.status(200).redirect('/pixel-art')
 });
 
 app.get('/load_canvas', async (req, res) => {
-    const query = `
-        WITH user_artwork_ids AS (
-          SELECT artwork FROM users_to_artwork
-          WHERE username = '${req.session.user.username}'
-        ),
-        user_artworks AS (
-          SELECT * 
-          FROM artwork INNER JOIN user_artwork_ids
-          ON artwork.artwork_id = user_artwork_ids.artwork
-        )
-        SELECT * FROM user_artworks
-        WHERE user_artworks.artwork_id = '${req.session.artwork_id}';
-    `;
+  const query = `
+      WITH user_artwork_ids AS (
+        SELECT artwork FROM users_to_artwork
+        WHERE username = '${req.session.user.username}'
+      ),
+      user_artworks AS (
+        SELECT * 
+        FROM artwork INNER JOIN user_artwork_ids
+        ON artwork.artwork_id = user_artwork_ids.artwork
+      )
+      SELECT * FROM user_artworks
+      WHERE user_artworks.artwork_id = '${req.session.artwork_id}';
+  `;
 
-    try {
-        const result = await db.one(query);
-        console.dir(result, {depth: null});
-        res.status(200).send(result);
-    }
-    catch (err) {
-        res.status(400);
-    }
+  try {
+      const result = await db.one(query);
+      console.dir(result, {depth: null});
+      res.status(200).send(result);
+  }
+  catch (err) {
+      res.status(400);
+  }
 });
 
 const rooms = new Map();
