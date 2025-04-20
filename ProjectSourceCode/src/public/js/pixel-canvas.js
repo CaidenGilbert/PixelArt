@@ -52,6 +52,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function SaveArt()
     {
+        const node = document.getElementById('canvas-container');
+        htmlToImage.toPng(node, { canvasWidth: 200, canvasHeight: 200 })
+            .then((dataURL) => {
+                axios.post('/save_thumbnail', {
+                    image: dataURL,
+                })
+                .then((res) => {
+                    console.log(res);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+            });
         //*******************************************************experimental*********************** */
         const artwork_data = [];
 
@@ -81,23 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
-            const node = document.getElementById('canvas-container');
-            htmlToImage.toPng(node, { canvasWidth: 200, canvasHeight: 200 })
-                .then((dataURL) => {
-                    axios.post('/save_thumbnail', {
-                        image: dataURL,
-                    })
-                    .then((res) => {
-                        console.log(res);
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-
             SaveArt();
         });
     }
@@ -138,15 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener("beforeunload", async() => {
-        console.log("SAVING");
         SaveArt();
     });
 
     // This part was outside the DOMContentLoaded block — moved it in here
-    if (artName) {
+        console.log("hello****************");
         axios.get('/load_canvas')
             .then((res) => {
-                const artArray = res.data.properties.artArray;
+                const artArray = res.properties.artArray;
                 const num_drawn_pixels = artArray.length;
 
                 for (let i = 0; i < num_drawn_pixels; i++) {
@@ -163,5 +161,4 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch((err) => {
                 console.log(err);
             });
-    }
 });

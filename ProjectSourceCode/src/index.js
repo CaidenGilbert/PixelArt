@@ -438,7 +438,7 @@ app.get('/private_gallery', async (req, res) => {
 });
 
 app.post('/load_canvas', (req, res) => {
-    console.log(req.body);
+    console.log("NUMBER 1:"+req.body);
     if ("new_canvas" in req.body) {
         req.session.saved_canvas = false;
         req.session.artwork_id = -1;
@@ -455,6 +455,7 @@ app.post('/load_canvas', (req, res) => {
 });
 
 app.get('/load_canvas', async (req, res) => {
+    console.log("NUMBER 2:"+req.bodyParser);
     console.log("PULLING FROM DB")
     const query = `
         WITH user_artwork_ids AS (
@@ -471,10 +472,12 @@ app.get('/load_canvas', async (req, res) => {
     `;
 
     try {
+        console.log(query);
+        console.log("***********************************************");
         const result = await db.one(query);
+        console.dir(result);
         res.status(200).redirect('/pixel-art')
-        console.dir(result, {depth: null});
-        res.status(200).send(result);
+        res.status(200).send(result.properties);
     }
     catch (err) {
         res.status(400);
