@@ -136,7 +136,7 @@ app.get('/pixel-art', async(req, res) => {
 
   if(req.session.user)
   {
-    console.log('Pixel art route accessed!');
+    console.log('Pixel art route accessed!1');
 
       res.render('./pages/pixel-art', {
       title: 'Pixel Art Creator',
@@ -283,12 +283,51 @@ app.get('/logout', (req, res) => {
   }
 });
 
-app.get('/globalGallery', (req, res) => {
-  res.render('./pages/globalGallery.hbs', {
-    title: 'Global Gallery',
-    artworks: []
-  });
+
+
+app.get('/public_gallery', async (req, res) => {
+  const query = `
+    SELECT ua.thumbnail, ua.artwork_name, u.username
+    FROM uploaded_artwork ua
+    JOIN users u ON ua.user_id = u.user_id
+  `;
+
+  try {
+    const artworks = await db.any(query);
+    res.render('./pages/globalGallery', { artworks });
+  } catch (err) {
+    console.error('Error loading gallery:', err);
+    res.status(500).send('Failed to load gallery.');
+  }
 });
+app.get("/check_artwork/:id", async (req, res) => {
+  const query = `SELECT COUNT(*) FROM uploaded_artwork WHERE artwork_id = $1`;
+  try {
+    const result = await db.one(query, [req.params.id]);
+    res.json({ exists: parseInt(result.count) > 0 });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error checking artwork" });
+  }
+});
+app.post("/update_uploaded_artwork", async (req, res) => {
+  const { artwork_id, properties, thumbnail } = req.body;
+  const query = `
+    UPDATE artwork
+    SET properties = $1, thumbnail = $2
+    WHERE artwork_id = $3
+  `;
+
+  try {
+    await db.none(query, [properties, thumbnail, artwork_id]);
+    res.status(200).json({ message: "Artwork updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update artwork" });
+  }
+});
+
+
 
 app.get('/profile', (req, res) => {
   res.render('./pages/profile.hbs', {
@@ -318,7 +357,7 @@ app.post("/canvas", async(req, res) => {
   if(true) // change to req.session.user on production version
     {
       console.log("---------------------------------------------------");
-      console.log('Pixel art route accessed!');
+      console.log('Pixel art route accessed!2');
       const roomId = await req.body.roomInput;
       req.body.roomInput = '';
       const canvasRows = [];
@@ -368,6 +407,24 @@ app.post("/canvas", async(req, res) => {
       res.render("./pages/login",{});
     }
 });
+
+app.post('/uploaded_canvas', async (req, res) => {
+  const { artwork_name, properties, thumbnail } = req.body;
+
+  try {
+    await db.none(
+      `INSERT INTO uploaded_artwork (artwork_name, properties, thumbnail)
+       VALUES ($1, $2, $3)`,
+      [artwork_name, properties, thumbnail]
+    );
+
+    res.status(200).json({ message: 'Artwork uploaded successfully!', artwork_id: result.artwork_id });
+  } catch (error) {
+    console.error('Error uploading artwork:', error);
+    res.status(500).json({ message: 'Failed to upload artwork.' });
+  }
+});
+
 // *****************************************************
 // <!-- LAB 11 -->
 // *****************************************************
@@ -570,4 +627,6 @@ io.on('connection', (socket) => {
 
 module.exports = server.listen(3000, () => {
   console.log("listening on *:3000");
+  console.log(`Server is running on http://localhost:${3000}`);
+
 });

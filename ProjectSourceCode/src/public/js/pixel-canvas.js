@@ -125,8 +125,86 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener("beforeunload", () => {
         SaveArt();
     });
+    //const artworkId = document.querySelector('.container').dataset.artworkId;
+    
+    
+   
 
-    // This part was outside the DOMContentLoaded block — moved it in here
+
+const upldBtn = document.getElementById('upload-btn');
+if (upldBtn) {
+    console.log("here");
+    upldBtn.addEventListener("click", async () => {
+        console.log("Script loaded, upload button found:", upldBtn);
+
+    const artworkId = sessionStorage.getItem("artwork_id"); // or wherever you store it
+   // const artworkName = sessionStorage.getItem("artwork_name");
+  //  const properties = JSON.stringify(currentCanvas); // your canvas object
+   // const thumbnail = currentThumbnail; // base64 string, for example
+  
+    try {
+      // Step 1: Check if artwork_id already exists
+      console.log("here");
+      const checkRes = await fetch(`/check_artwork/${artworkId}`);
+      const checkData = await checkRes.json();
+  
+      if (checkData.exists) {
+        const confirmed = confirm("Artwork already uploaded. Do you want to update it?");
+        if (!confirmed) return;
+  
+        // Step 2: Update existing artwork
+        const updateRes = await fetch("/update_uploaded_artwork", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ artwork_id: artworkId, }),
+        });
+  
+        if (updateRes.ok) alert("Artwork updated!");
+        else alert("Failed to update artwork.");
+      } else {
+        // Step 3: Create new artwork
+        const confirmUpload = confirm("⚠️ This will permanently upload this iteration to the global gallery. Do you want to proceed?");
+        
+        if (!confirmUpload) {
+            return; // Exit if the user cancels
+        }
+
+        // Optional: Gather the artwork data here
+        const artworkName = prompt("Please name your artwork:");
+
+        if (!artworkName) {
+            alert("Artwork name is required to upload.");
+            return;
+        }
+        const createRes = await fetch("/uploaded_canvas", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ artwork_name: artworkName, }),
+        });
+
+        const createData = await createRes.json();
+
+console.log("Returned artwork_id:", createData.artwork_id);
+
+
+if (createData.success) {
+  const artworkId = createData.artwork_id;
+  console.log("Artwork uploaded with ID:", artworkId);
+
+  // You can store this in a global var or localStorage if needed
+  localStorage.setItem("artwork_id", artworkId);
+}
+  
+        if (createRes.ok) alert("Artwork uploaded!");
+        else alert("Failed to upload artwork.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong!");
+    }
+  });
+} 
+// This part was outside the DOMContentLoaded block — moved it in here
     const artwork_name = document.getElementById('artwork_name').value;
     if (artwork_name) {
         axios.get('/load_canvas')
