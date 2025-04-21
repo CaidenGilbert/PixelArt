@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtn = document.getElementById('clear-btn');
     if (clearBtn) {
         clearBtn.addEventListener('click', () => {
+            artwork_data = [];
             for (const pixel of pixels) {
                 pixel.removeAttribute('style');
             }
@@ -57,8 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function SaveArt()
     {
+
+
         //*******************************************************experimental*********************** */
-        alert("SAVING");
         for (let i = 0; i < canvasHeight; i++) {
             for (let j = 0; j < canvasWidth; j++) {
               if (canvasData[i][j]) {
@@ -162,7 +164,7 @@ axios.get('/load_canvas')
             const x = artArray[i].position[0];
             const y = artArray[i].position[1];
 
-            const pixel = document.querySelector(`[data-row="${y}"][data-col="${x}"]`);
+            const pixel = document.querySelector(`[data-row="${y}"][data-col="${x}"][class = "pixel"]`);
             if (pixel) {
                 pixel.style.backgroundColor = artArray[i].color;
                 pixel.style.borderColor = artArray[i].color;
