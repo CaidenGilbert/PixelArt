@@ -95,16 +95,15 @@ app.get("/",(req,res) =>
 
 app.get("/homeCanvas", (req, res) => 
 {
-
   if(req.session.user)
-    {
-      res.render("./pages/homeCanvas",{username: user.username});
-    }
-    else
-    {
-      res.render("./pages/login",{username: user.username});
-      console.log('not logged in')
-    }
+  {
+    res.render("./pages/homeCanvas",{username: user.username});
+  }
+  else
+  {
+    res.render("./pages/login",{username: user.username});
+  }
+
 });
 
 app.get("/login", (req, res) => 
