@@ -103,6 +103,7 @@ app.get("/homeCanvas", (req, res) =>
   {
     res.render("./pages/login",{username: user.username});
   }
+
 });
 
 app.get("/login", (req, res) => 
