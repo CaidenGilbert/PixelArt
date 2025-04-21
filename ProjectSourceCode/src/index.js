@@ -118,6 +118,7 @@ app.get("/login", (req, res) =>
 });
 
 app.get('/pixel-art', async(req, res) => {
+  console.log("REDIRECTED");
   const canvasRows = [];
   const canvasWidth = 32;
   const canvasHeight = 32;
@@ -240,18 +241,19 @@ app.post("/register", async (req,res) => {
 app.post('/save_canvas', async(req, res) => {
   
   const removeSpace = req.body.name.replace(/\s/g,"");
-  console.log("Username" + user.username + " "+ "Name "+ removeSpace);
-  if(user.username != undefined && removeSpace.length > 0)
+  let saveUser = user.username;
+  console.log("Username" + saveUser + " "+ "Name "+ removeSpace);
+  if(saveUser != undefined && removeSpace.length > 0)
   {
   console.log("IN SAVE **************************");
-  const searchForSameName = "select Count(*) from users left join users_to_artwork on users.username = users_to_artwork.username left join artwork on artwork = artwork.artwork_id where users.username = '"+user.username+"' AND artwork.artwork_name = '"+req.body.name+"';";
+  const searchForSameName = "select Count(*) from users left join users_to_artwork on users.username = users_to_artwork.username left join artwork on artwork = artwork.artwork_id where users.username = '"+saveUser+"' AND artwork.artwork_name = '"+req.body.name+"';";
   const countExistingArt = await db.any(searchForSameName);
   console.log("NAME COUNT: "+ countExistingArt[0].count);
-  console.log("Name: "+ req.body.name + " "+ "Info: "+ req.body.properties+ " User: "+ user.username+ "|");
+  console.log("Name: "+ req.body.name + " "+ "Info: "+ req.body.properties+ " User: "+ saveUser+ "|");
 
   if(countExistingArt[0].count == 1)
   {
-    const searchForArtId = "select artwork.artwork_id from users left join users_to_artwork on users.username = users_to_artwork.username left join artwork on artwork = artwork.artwork_id where users.username = '"+user.username+"' AND artwork.artwork_name = '"+req.body.name+"';";
+    const searchForArtId = "select artwork.artwork_id from users left join users_to_artwork on users.username = users_to_artwork.username left join artwork on artwork = artwork.artwork_id where users.username = '"+saveUser+"' AND artwork.artwork_name = '"+req.body.name+"';";
     const getArtId = await db.any(searchForArtId);
     const updateExistingQuery = "update artwork set properties = '"+JSON.stringify(req.body.properties)+"' where artwork.artwork_id = "+getArtId[0].artwork_id+";";
     await db.none(updateExistingQuery);
@@ -266,7 +268,7 @@ app.post('/save_canvas', async(req, res) => {
         await db.none(query);
         const artworkPrimaryKey = 'select Count(*) from artwork;';
         const countArt = await db.any(artworkPrimaryKey);
-        const addLinkFromUserToArt = "insert into users_to_artwork(username,artwork) values ('"+user.username+"',"+countArt[0].count+");";
+        const addLinkFromUserToArt = "insert into users_to_artwork(username,artwork) values ('"+saveUser+"',"+countArt[0].count+");";
         await db.none(addLinkFromUserToArt);
         res.status(204);
     }
@@ -329,8 +331,10 @@ app.post('/save_thumbnail', (req, res) => {
 app.post("/canvas", async(req, res) => {
   if(true) // change to req.session.user on production version
     {
-      console.log("---------------------------------------------------");
-      console.log('Pixel art route accessed!');
+      req.session.saved_canvas = false;
+      req.session.artwork_id = -1;
+      req.session.artwork_name = "";
+
       const roomId = await req.body.roomInput;
       req.body.roomInput = '';
       const canvasRows = [];
@@ -375,7 +379,6 @@ app.post("/canvas", async(req, res) => {
       else
       {
         res.render("./pages/login",{username: user.username});
-        console.log('in else statement')
       }
     
       // when entering a room, the new websocket either should create a now room or get updated on all changes in existing room
