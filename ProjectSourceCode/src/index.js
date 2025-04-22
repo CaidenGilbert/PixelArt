@@ -85,11 +85,11 @@ app.get("/",(req,res) =>
 {
   if(req.session.user)
   {
-    res.render("./pages/altLogin", { message: `Already logged in as, ${user.username}` , username: user.username} );
+    res.render("./pages/altLogin", { message: `Already logged in as, ${req.session.user.username}` , username: req.session.user.username} );
   }
   else
   {
-    res.render("./pages/login",{username: user.username});
+    res.render("./pages/login",{});
   }
 });
 
@@ -97,11 +97,11 @@ app.get("/homeCanvas", (req, res) =>
 {
   if(req.session.user)
   {
-    res.render("./pages/homeCanvas",{username: user.username});
+    res.render("./pages/homeCanvas",{username: req.session.user.username});
   }
   else
   {
-    res.render("./pages/login",{username: user.username});
+    res.render("./pages/login",{});
   }
 
 });
@@ -110,11 +110,11 @@ app.get("/login", (req, res) =>
 {
   if(req.session.user)
   {
-    res.render("./pages/altLogin",{ message: `Already logged in as, ${user.username}` , username: user.username} );
+    res.render("./pages/altLogin",{ message: `Already logged in as, ${req.session.user.username}` , username: req.session.user.username} );
   }
   else
   {
-    res.render("./pages/login",{username: user.username});
+    res.render("./pages/login",{});
   }
 });
 
@@ -155,12 +155,12 @@ app.get('/pixel-art', async(req, res) => {
       saved_canvas: req.session.saved_canvas,
       artwork_id: req.session.artwork_id,
       artwork_name: req.session.artwork_name,
-      username: user.username
+      username: req.session.user.username
   });
   }
   else
   {
-    res.render("./pages/login",{username: user.username});
+    res.render("./pages/login",{});
     console.log('in else statement')
   }
 
@@ -186,7 +186,7 @@ try
     }
     else
     {
-      res.status(400).render("./pages/login",{message:"Incorrect username or password",username: user.username});
+      res.status(400).render("./pages/login",{message:"Incorrect username or password",username: req.session.user.username});
     }
 }
 catch(err)
@@ -198,7 +198,7 @@ catch(err)
 
 app.get("/register", (req, res) => 
 {
-  res.render("./pages/register",{username: user.username});
+  res.render("./pages/register",{});
 });
 
 app.post("/register", async (req,res) => {
@@ -224,12 +224,12 @@ app.post("/register", async (req,res) => {
     }
     else
     {
-      res.status(400).render("./pages/register",{message:"Invalid Username",username: user.username});
+      res.status(400).render("./pages/register",{message:"Invalid Username",username: req.session.user.username});
     }
   }
   catch(err)
   {
-    res.status(400).render("./pages/register",{message: "Username is not valid",username: user.username});
+    res.status(400).render("./pages/register",{message: "Username is not valid",username: req.session.user.username});
   }
 
 });
@@ -242,7 +242,7 @@ app.post("/register", async (req,res) => {
 app.post('/save_canvas', async(req, res) => {
   
   const removeSpace = req.body.name.replace(/\s/g,"");
-  let saveUser = user.username;
+  let saveUser = req.session.user.username;
   console.log("Username" + saveUser + " "+ "Name "+ removeSpace);
   if(saveUser != undefined && removeSpace.length > 0)
   {
@@ -284,15 +284,16 @@ app.get('/logout', (req, res) => {
   if(req.session.user)
   {
     console.log("In LOGOUT");
+    const PastUser = req.session.user.username;
     req.session.destroy( (err) => {
-        res.render('./pages/logout',{Loggedout: user.username});
+        res.render('./pages/logout',{Loggedout: PastUser});
         user.password = undefined;  // reseting pasword feild
         user.username = undefined;  // reseting username feild
     });
   }
   else
   {
-    res.render("./pages/login",{username: user.username});
+    res.render("./pages/login",{});
   }
 });
 
@@ -300,14 +301,14 @@ app.get('/globalGallery', (req, res) => {
   res.render('./pages/globalGallery.hbs', {
     title: 'Global Gallery',
     artworks: [],
-    username: user.username
+    username: req.session.user.username
   });
 });
 
 app.get('/profile', (req, res) => {
   res.render('./pages/profile.hbs', {
     title: 'profile',
-    username: user.username
+    username: req.session.user.username
   });
 });
 
@@ -373,13 +374,13 @@ app.post("/canvas", async(req, res) => {
           saved_canvas: req.session.saved_canvas,
           artwork_id: req.session.artwork_id,
           artwork_name: req.session.artwork_name,
-          username: user.username,
+          username: req.session.user.username,
           canvasNumber: roomId
       });
       }
       else
       {
-        res.render("./pages/login",{username: user.username});
+        res.render("./pages/login",{});
       }
     
       // when entering a room, the new websocket either should create a now room or get updated on all changes in existing room
@@ -392,7 +393,7 @@ app.post("/canvas", async(req, res) => {
     }
     else
     {
-      res.render("./pages/login",{username: user.username});
+      res.render("./pages/login",{});
     }
 });
 // *****************************************************
@@ -438,13 +439,13 @@ app.get('/private_gallery', async (req, res) => {
 
         res.status(200).render('./pages/privateGallery.hbs', {
             artworks: split_results,
-            username: user.username
+            username: req.session.user.username
         });
     }
     catch (err) {
         res.status(404).render('./pages/privateGallery.hbs', {
             artworks: [],
-            username: user.username
+            username: req.session.user.username
         });
     }
 });
