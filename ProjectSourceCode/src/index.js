@@ -314,27 +314,29 @@ app.get('/profile', (req, res) => {
 app.post('/save_thumbnail', async(req, res) => {
   if(req.session.artwork_id == -1)
     {
-
-      const artworkPrimaryKey = 'select Count(*) from artwork;';
-      const countArt = await db.any(artworkPrimaryKey);
-      const TheId = Number(countArt[0].count) + 1;
-      req.session.artwork_id = TheId;
-      console.log("THE NUMBER IS : "+ TheId +" The Name is: "+ req.body.theName);
-      const query1 = `
-      INSERT INTO artwork (artwork_name)
-      VALUES ('${req.body.theName}');`;
+      const query2 = `
+      INSERT INTO artwork (artwork_name, thumbnail)
+      VALUES ('${req.body.theName}','${req.body.image}');`;
       try {
-          await db.none(query1);
+          await db.none(query2);
+          const artworkPrimaryKey = 'select Count(*) from artwork;';
+          const countArt = await db.any(artworkPrimaryKey);
+          req.session.artwork_id = countArt[0].count;
+          const addLinkFromUserToArt = "insert into users_to_artwork(username,artwork) values ('"+req.session.user.username+"',"+countArt[0].count+");";
+          await db.none(addLinkFromUserToArt);
       }
       catch (err) {
           res.status(400);  
       }
     }
-  const query = `
+  else
+  {
+    const query = `
     UPDATE artwork
     SET thumbnail = '${req.body.image}'
     WHERE artwork_id = ${req.session.artwork_id};
   `;
+  //could check to see if session.artwork_id == TheId
   try {
     console.log(query);
     await db.none(query);
@@ -343,6 +345,7 @@ app.post('/save_thumbnail', async(req, res) => {
   catch (err) {
     console.log(err);
     res.status(400);
+  }   
   }
 });
     

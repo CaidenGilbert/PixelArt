@@ -94,34 +94,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {
         saveBtn.addEventListener('click', async() => {
-            const node = document.getElementById('canvas-container');
-            await htmlToImage.toPng(node, {canvasWidth: 200, canvasHeight: 200})
-            .then((dataURL) => {
-                axios.post('/save_thumbnail', {
-                image: dataURL,
-                })
-                .then((res) => {
-                    console.log(res);
-                })
-                .catch((err) => {
-                    console.log(err);   
-                });
-                })
-            .catch((err) => {
-                console.log(err);
-            });
             if (artName == '')
             {
-                artName = document.getElementById('theName').value
+                try
+                {
+                    artName = document.getElementById('theName').value
+                    if(artName == '')
+                    {
+                        alert("Name Your Artwork Before Saving");
+                    }
+                }
+                catch
+                {
+                    alert("Name Your Artwork Before Saving");
+                }
             }
             if(artName != '')
             {
+                const node = document.getElementById('canvas-container');
+                await htmlToImage.toPng(node, {canvasWidth: 200, canvasHeight: 200})
+                .then((dataURL) => {
+                    axios.post('/save_thumbnail', {
+                    image: dataURL,
+                    theName: artName
+                    })
+                    .then((res) => {
+                        console.log(res);
+                    })
+                    .catch((err) => {
+                        console.log(err);   
+                    });
+                    })
+                .catch((err) => {
+                    console.log(err);
+                });
+                if (artName == '')
+                {
+                    artName = document.getElementById('theName').value
+                }
                 alert("Saved");
                 await SaveArt();
-            }
-            else
-            {
-                alert("Name Your Artwork Before Saving");
             }
         });
     }
