@@ -58,34 +58,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function SaveArt()
     {
-
-
-        //*******************************************************experimental*********************** */
-        for (let i = 0; i < canvasHeight; i++) {
-            for (let j = 0; j < canvasWidth; j++) {
-              if (canvasData[i][j]) {
-                  artwork_data.push({
-                      position: [j, i],
-                      color: rgbToHex(pixels[j + (i * canvasWidth)].style.backgroundColor)
-                  });
-              }
+        if (artName == '')
+        {
+            artName = document.getElementById('theName').value
+        }
+        if(artName != '')
+        {
+            //*******************************************************experimental*********************** */
+            for (let i = 0; i < canvasHeight; i++) {
+                for (let j = 0; j < canvasWidth; j++) {
+                if (canvasData[i][j]) {
+                    artwork_data.push({
+                        position: [j, i],
+                        color: rgbToHex(pixels[j + (i * canvasWidth)].style.backgroundColor)
+                    });
+                }
+                }
             }
+
+            //*******************************************************experimental*********************** */
+            await axios.post('/save_canvas', {
+            name: `${artName}`,
+            properties: {
+                width: canvasWidth,
+                height: canvasHeight,
+                artArray: artwork_data
+            }
+            });
+            return true;
         }
         
-        //*******************************************************experimental*********************** */
-      if (artName == '')
-      {
-        artName = document.getElementById('theName').value
-      }
-      await axios.post('/save_canvas', {
-          name: `${artName}`,
-          properties: {
-              width: canvasWidth,
-              height: canvasHeight,
-              artArray: artwork_data
-          }
-        });
-        return true;
     }
 
     // Save button functionality
@@ -108,8 +110,19 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch((err) => {
                 console.log(err);
             });
-            alert("Saved");
-            await SaveArt();
+            if (artName == '')
+            {
+                artName = document.getElementById('theName').value
+            }
+            if(artName != '')
+            {
+                alert("Saved");
+                await SaveArt();
+            }
+            else
+            {
+                alert("Name Your Artwork Before Saving");
+            }
         });
     }
 
