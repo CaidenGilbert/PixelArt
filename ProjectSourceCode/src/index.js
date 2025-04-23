@@ -119,7 +119,6 @@ app.get("/login", (req, res) =>
 });
 
 app.get('/pixel-art', async(req, res) => {
-  console.log("REDIRECTED");
   const canvasRows = [];
   const canvasWidth = 32;
   const canvasHeight = 32;
@@ -312,14 +311,33 @@ app.get('/profile', (req, res) => {
   });
 });
 
-app.post('/save_thumbnail', (req, res) => {
+app.post('/save_thumbnail', async(req, res) => {
+  if(req.session.artwork_id == -1)
+    {
+
+      const artworkPrimaryKey = 'select Count(*) from artwork;';
+      const countArt = await db.any(artworkPrimaryKey);
+      const TheId = Number(countArt[0].count) + 1;
+      req.session.artwork_id = TheId;
+      console.log("THE NUMBER IS : "+ TheId +" The Name is: "+ req.body.theName);
+      const query1 = `
+      INSERT INTO artwork (artwork_name)
+      VALUES ('${req.body.theName}');`;
+      try {
+          await db.none(query1);
+      }
+      catch (err) {
+          res.status(400);  
+      }
+    }
   const query = `
     UPDATE artwork
     SET thumbnail = '${req.body.image}'
     WHERE artwork_id = ${req.session.artwork_id};
   `;
   try {
-    db.none(query);
+    console.log(query);
+    await db.none(query);
     res.status(201);
   }
   catch (err) {
