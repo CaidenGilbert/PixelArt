@@ -46,7 +46,8 @@ button:hover {
 }
 
 .pixel-row {
-    display: flex;
+  display: flex;
+
 }
 
 .pixel {
