@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
         pixel.addEventListener('click', function() {
             const row = Number.parseInt(this.getAttribute('data-row'));
             const col = Number.parseInt(this.getAttribute('data-col'));
-            console.log("Row: " + row + " Column: " + col + " Color: " + chosen_color);
             canvasData[row][col] = chosen_color;
             this.style.backgroundColor = chosen_color;
             this.style.borderColor = chosen_color;
@@ -44,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Reset canvas data
             for (let i = 0; i < canvasHeight; i++) {
                 for (let j = 0; j < canvasWidth; j++) {
-                    console.log("RESETTING");
                     canvasData[i][j] = 0;
                 }
             }
@@ -157,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (pixel.getAttribute('data-row') == row && pixel.getAttribute('data-col') == col) {
                         pixel.style.backgroundColor = historyArray[row][col];
                         pixel.style.borderColor = historyArray[row][col];
+                        canvasData[row][col]= historyArray[row][col];
                     }
                 }
             }
@@ -167,14 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < inputs.length; i++) {
         inputs[i].onkeyup = function () {
             if (this.value.match(/.+/)) {
-                console.log(this.value);
                 artName = this.value;
             }
         };
     }
 
     window.addEventListener("beforeunload", async() => {
-        console.log("SAVING");
         await SaveArt();
     });
 

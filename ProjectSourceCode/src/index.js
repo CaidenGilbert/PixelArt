@@ -38,7 +38,7 @@ const dbConfig = {
 
 const db = pgp(dbConfig);
   
-// test your database
+// test database
 db.connect()
     .then(obj => {
         console.log('Database connection successful'); // you can view this message in the docker compose logs
@@ -52,6 +52,7 @@ db.connect()
 // <!-- App Settings -->
 // *****************************************************
 
+//only used in login when creating user session
 const user = {
     username: undefined,
     password: undefined
@@ -81,6 +82,7 @@ app.use(
 app.use("/js",express.static(path.join(__dirname, 'public/js')));
 app.use("/css",express.static(path.join(__dirname, 'public/css')));
 
+//if already logged in tell the user. Otherwise go to login page
 app.get("/",(req,res) => 
 {
   if(req.session.user)
@@ -118,6 +120,7 @@ app.get("/login", (req, res) =>
   }
 });
 
+//The following app.get initializes all required items for a canvas to be created
 app.get('/pixel-art', async(req, res) => {
   const canvasRows = [];
   const canvasWidth = 32;
@@ -160,7 +163,6 @@ app.get('/pixel-art', async(req, res) => {
   else
   {
     res.render("./pages/login",{});
-    console.log('in else statement')
   }
 
 });
@@ -185,7 +187,7 @@ try
     }
     else
     {
-      res.status(400).render("./pages/login",{message:"Incorrect username or password",username: req.session.user.username});
+      res.status(400).render("./pages/login",{message:"Incorrect username or password"});
     }
 }
 catch(err)
@@ -223,33 +225,37 @@ app.post("/register", async (req,res) => {
     }
     else
     {
-      res.status(400).render("./pages/register",{message:"Invalid Username",username: req.session.user.username});
+      res.status(400).render("./pages/register",{message:"Invalid Username"});
     }
   }
   catch(err)
   {
-    res.status(400).render("./pages/register",{message: "Username is not valid",username: req.session.user.username});
+    res.status(400).render("./pages/register",{message: "Username is not valid"});
   }
 
 });
 /**
  * /save_canvas will save artwork to the artwork database. 
- * It also adds a linking entry into users_to_artwork which connects user to their artwork
+ * It also adds a linking entry into users_to_artwork which connects user to their artwork.
  * Artwork is saved using JSON.Stringify( argx ). argx is a 2D array with the HEX format.
  * If an artwork created by a user has the same name as another peice of their art, then the previous peice of art will be updated.
  */
 app.post('/save_canvas', async(req, res) => {
   
   const removeSpace = req.body.name.replace(/\s/g,"");
-  let saveUser = req.session.user.username;
-  console.log("Username" + saveUser + " "+ "Name "+ removeSpace);
+  let saveUser = '';
+  try
+  {
+    saveUser = req.session.user.username;
+  }
+  catch
+  {
+    res.render("./pages/login",{});
+  }
   if(saveUser != undefined && removeSpace.length > 0)
   {
-  console.log("IN SAVE **************************");
   const searchForSameName = "select Count(*) from users left join users_to_artwork on users.username = users_to_artwork.username left join artwork on artwork = artwork.artwork_id where users.username = '"+saveUser+"' AND artwork.artwork_name = '"+req.body.name+"';";
   const countExistingArt = await db.any(searchForSameName);
-  console.log("NAME COUNT: "+ countExistingArt[0].count);
-  console.log("Name: "+ req.body.name + " "+ "Info: "+ req.body.properties+ " User: "+ saveUser+ "|");
 
   if(countExistingArt[0].count == 1)
   {
@@ -282,7 +288,6 @@ app.post('/save_canvas', async(req, res) => {
 app.get('/logout', (req, res) => {
   if(req.session.user)
   {
-    console.log("In LOGOUT");
     const PastUser = req.session.user.username;
     req.session.destroy( (err) => {
         res.render('./pages/logout',{Loggedout: PastUser});
@@ -295,42 +300,48 @@ app.get('/logout', (req, res) => {
     res.render("./pages/login",{});
   }
 });
-
-app.get('/globalGallery', (req, res) => {
-  res.render('./pages/globalGallery.hbs', {
-    title: 'Global Gallery',
-    artworks: [],
-    username: req.session.user.username
-  });
-});
-
-app.get('/profile', (req, res) => {
-  res.render('./pages/profile.hbs', {
-    title: 'profile',
-    username: req.session.user.username
-  });
-});
-
+/**
+ * /save_thumbnail will update the thumbnail column of the artwork table with the new thumbnail if the artwork exists. 
+ * If it does not exist, then a new entry with the artwork name will be added to the artwork table along with a new enrty 
+ * into the linking table users_to_artwork.
+ */
 app.post('/save_thumbnail', async(req, res) => {
-  if(req.session.artwork_id == -1)
-    {
-      const query2 = `
-      INSERT INTO artwork (artwork_name, thumbnail)
-      VALUES ('${req.body.theName}','${req.body.image}');`;
-      try {
-          await db.none(query2);
-          const artworkPrimaryKey = 'select Count(*) from artwork;';
-          const countArt = await db.any(artworkPrimaryKey);
+  let theCountOfSameNameArt = 0;
+  try
+  {
+    const checkForDuplicates = "select Count(*) from users left join users_to_artwork on users.username = users_to_artwork.username left join artwork on artwork = artwork.artwork_id where users.username = '"+req.session.user.username+"' AND artwork.artwork_name = '"+req.body.theName+"';";
+    const countDuplicates = await db.any(checkForDuplicates);
+    theCountOfSameNameArt = countDuplicates[0].count
+  }
+  catch(err)
+  {
+    res.status(400);
+  }
+  if(req.session.artwork_id == -1 && theCountOfSameNameArt == 0)
+  {
+    const insertQuery = `
+    INSERT INTO artwork (artwork_name, thumbnail)
+    VALUES ('${req.body.theName}','${req.body.image}');`;
+    try {
+          await db.none(insertQuery);
+          const getArtworkKey = 'select Count(*) from artwork;';
+          const countArt = await db.any(getArtworkKey);
           req.session.artwork_id = countArt[0].count;
-          const addLinkFromUserToArt = "insert into users_to_artwork(username,artwork) values ('"+req.session.user.username+"',"+countArt[0].count+");";
-          await db.none(addLinkFromUserToArt);
-      }
-      catch (err) {
-          res.status(400);  
-      }
+          const insertUserToArt = "insert into users_to_artwork(username,artwork) values ('"+req.session.user.username+"',"+countArt[0].count+");";
+          await db.none(insertUserToArt);
     }
+    catch (err) {
+        res.status(400);  
+    }
+  }
   else
   {
+    if(req.session.artwork_id == -1 && theCountOfSameNameArt != 0)
+    {
+      const findId = "select artwork_id from users left join users_to_artwork on users.username = users_to_artwork.username left join artwork on artwork = artwork.artwork_id where users.username = '"+req.session.user.username+"' AND artwork.artwork_name = '"+req.body.theName+"';";
+      const lookForId = await db.any(findId);
+      req.session.artwork_id = lookForId[0].artwork_id;
+    }
     const query = `
     UPDATE artwork
     SET thumbnail = '${req.body.image}'
@@ -338,7 +349,6 @@ app.post('/save_thumbnail', async(req, res) => {
   `;
   //could check to see if session.artwork_id == TheId
   try {
-    console.log(query);
     await db.none(query);
     res.status(201);
   }
@@ -349,8 +359,11 @@ app.post('/save_thumbnail', async(req, res) => {
   }
 });
     
-//add variable to save last room
 
+/**
+ * If a user enters an exclusive canvas then /canvas will create the nessesary items for a collaborative canvas and send 
+ * that to pixel-art.hbs
+ */
 app.post("/canvas", async(req, res) => {
   if(true) // change to req.session.user on production version
     {
@@ -382,7 +395,7 @@ app.post("/canvas", async(req, res) => {
         }
         paletteRows.push(row);
       }
-    
+    //SETTING UP CANVAS
       if(req.session.user)
       {
         console.log('Pixel art route accessed!');
@@ -437,7 +450,10 @@ const auth = (req, res, next) => {
   next();
 };
 app.use(auth);
-
+/**
+ * Private Gallary will get all artworks pertaining to the logged 
+ * in user from the artwork table and send them in a list to privateGallery.hbs page
+ */
 app.get('/private_gallery', async (req, res) => {
     const COLS_PER_ROW = 3;
     const query = `
@@ -457,7 +473,6 @@ app.get('/private_gallery', async (req, res) => {
         for (let i = 0; i < num_rows; i++) {
             split_results[i] = results.slice(i * COLS_PER_ROW, i * COLS_PER_ROW + COLS_PER_ROW);
         }   
-
         res.status(200).render('./pages/privateGallery.hbs', {
             artworks: split_results,
             username: req.session.user.username
@@ -472,7 +487,7 @@ app.get('/private_gallery', async (req, res) => {
 });
 
 app.post('/load_canvas', (req, res) => {
-  console.log(req.body);
+
   if ("new_canvas" in req.body) {
       req.session.saved_canvas = false;
       req.session.artwork_id = -1;
@@ -486,7 +501,8 @@ app.post('/load_canvas', (req, res) => {
 
   res.status(200).redirect('/pixel-art')
 });
-
+// get('/load_canvas') will search for artwork by name and artwork id from the artworks table in users_db. 
+// This will then be sent to the front end to load the canvas.
 app.get('/load_canvas', async (req, res) => {
   const query = `
       WITH user_artwork_ids AS (
@@ -533,7 +549,7 @@ function roomOrganizer(socket,roomName)
       }
     if(sockets.length === 0)
     {
-      console.log("deleting");
+
       socketsToRooms.delete(roomName);
       rooms.delete(roomName);
       return true;
@@ -549,20 +565,15 @@ function roomOrganizer(socket,roomName)
 
 function designateRoom(socket,newRoom)
 {
-  console.log(`im here now ${socket.id} with room name ${newRoom}`);
-
   if(!socketsToRooms.has(newRoom)) //new room
   {
-      console.log("NEW ROOM CREATED");
       socket.join(newRoom); //joining new room
       socketsToRooms.set(newRoom, [socket.id]);  //adding socket to room record
-      console.log(socketsToRooms);
   }
   else
   {   //This loop is going to check to see if websocket is in room
       socket.join(newRoom);  //adding websocket to room
       io.to(socket.id).emit("update all", rooms.get(newRoom));  //getting newly added websocket up to speed by 'pushing' the rooms record to it
-      console.log("UPDATING LOG");
       socketsToRooms.get(newRoom).push(socket.id);  //adding websocket to room record
   }
 }
@@ -601,7 +612,7 @@ io.on('connection', (socket) => {
         }
     });
   });
-
+// on disconnection of websocket roomOrganizer will delete any rooms/saved information about rooms that are now vacant
 io.on("connection", socket => {
   socket.on("disconnecting", () => {
     for(const roomName of socket.rooms)
@@ -611,7 +622,7 @@ io.on("connection", socket => {
           roomOrganizer(socket,roomName);
         }
       }
-      console.log('User disconnected!')
+      console.log('User disconnected')
   });
 });
 
