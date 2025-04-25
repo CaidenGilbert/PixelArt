@@ -27,6 +27,7 @@ UAT For New Canvas Button:
 
 -This test will be conducted on a localhost test environment with one artist being simulated by one tab
 
+
 -The artist after clicking the publish button should be redirected to the pixel-art page where a blank canvas with color palette will be displayed. 
  This will be conducted by a console.log statement that prints the page where the artist was redirected.
 
@@ -68,5 +69,3 @@ UAT for auto upload:
 -The artist that recently logged on should also be able to click on the untitled artwork field and name the artwork to what they like. 
  Then they should be able to click the Pixels logo. After they are directed to the home page, they should navigate to their private canvas where they should find the newly saved artwork without a thumbnail. 
  After they click on the name of that artwork and are directed to /pixel-art, they should see the name they choose and after they scroll down, they should see the artwork which should be identical to the other artist's artwork.
-
-
