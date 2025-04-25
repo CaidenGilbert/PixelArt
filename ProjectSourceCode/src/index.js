@@ -147,7 +147,7 @@ app.get('/pixel-art', async(req, res) => {
 
   if(req.session.user)
   {
-    console.log('Rendered: /^.*127\.0\.0\.1.*\/pixel-art$/');
+    console.log('Rendered: /pixel-art');
 
       console.dir(paletteHeight,paletteRows,canvasHeight,canvasRows)
       res.status(200).render('./pages/pixel-art', {
@@ -403,7 +403,7 @@ app.post("/canvas", async(req, res) => {
     //SETTING UP CANVAS
       if(req.session.user)
       {
-        console.log('Pixel art route accessed!');
+        console.log('Rendered: /pixel-art');
     
           console.dir(paletteHeight,paletteRows,canvasHeight,canvasRows)
           res.render('./pages/pixel-art', {

@@ -4,64 +4,69 @@ https://docs.google.com/document/d/1mJZD2j8MRsV9ek5-_KUNFMMxBRpFA1Cle04wPdsPaS0/
 
 UAT For Exclusive Canvas:
 
--This test will be conducted on a localhost test environment with multiple users being simulated by multiple tabs.
+-This test will be conducted on a localhost test environment with multiple artists being simulated by multiple tabs.
 
-- The artist should be able to enter the room code and be redirected to the canvas page where they can collaborate 
-with their friends. This will be tested by sending a 302 response from the server along with a message stating that 
-the user has been redirected to the “ ‘canvas name’ canvas”.
+-The artist should be able to enter the room code and be redirected to the canvas page where they can collaborate with their friends. 
+ This will be tested by sending a console.log message saying that an artist entered the new room.
 
-- The artist will be able to watch the canvas being updated in real-time without personally updating the canvas. 
-This will be tested by verifying what room the user is in by their associated web socket. Additionally, when the 
-user enters the room, a console.log message will be sent stating “User is updated” after the connection with Redis 
-has been made and all previous changes emitted to the user.
+-The artist will be able to watch the canvas being updated in real-time without personally updating the canvas. 
+ This will be tested by visually watching the screen update as another artist colors the canvas. Additionally, when the artist enters the room, a console.log message will be sent stating “artist is updated”.
 
-- As the only artist in an exclusive canvas the artist will be able to change the canvas and then proceed to leave 
-the shared canvas without losing their change. The artist will enter the shared canvas, and then they will change 
-a central pixel to a different color and then leave the shared canvas by switching to another shared canvas. Upon the users 
-socket disconnecting a post request will be sent to the server which will update the users database with the most recent pixel art. 
-This will be detectable by a console.log message what will be displayed stating: "The canvas has been saved"+ (a comparison between the 
-canvas right before the user disconnected to the canvas stored in the database). The correct console.log statement will look like "The canvas has been saved: true"
-This will be tested by comparing the canvas before the change and after the change once they leave. This can be conducted 
-by getting the canvas when it is first made and added to the database, then comparing it to the canvas that was pushed 
-from the Redis database upon the disconnection of the user.
+-As the only artist in an exclusive canvas the artist will be able to change the canvas and then proceed to leave the shared canvas without losing their change.
+ The artist will enter the shared canvas, and then they will change a central pixel to a different color and then leave the shared canvas by switching to another shared canvas. 
+ This will be tested by navigating to their private gallery where they will click on the name of the recently saved canvas. 
+ Once they have been redirected to /pixel-art, they should see their recent changes.
 
--The user acceptance tester will be an artist who wants to collaborate with another artist on the same canvas. 
-I will be representing both artists by having two tabs pulled up next to each other while I color the canvas.
-With both tabs pulled up, I will only interact with one of the tabs while I should watch the other tab update 
-instantly after I change a pixel color on the other tab.
+-The artist acceptance tester will be an artist who wants to save their artwork the proper way. 
+ In order to do this the artist will first click the save art button without adding a name to the canvas. 
+ This action should be responded to with an alert which tells the artist to name their artwork before saving. 
+ Once the artist has named their artwork, they should be able to again click the save button and this time an alert will appear telling the artist that their artwork has been saved. 
+ Then the artist will navigate to their private gallery and observe that their newly created artwork with a small image is present.
 
-UAT For Public Canvas Button:
+UAT For New Canvas Button:
 
--This test will be conducted on a localhost test environment with one user being simulated by one tab
+-This test will be conducted on a localhost test environment with one artist being simulated by one tab
 
--The artist after clicking the publish button should be redirected to the public gallery where in the upper 
-left corner their newly created artwork will be displayed. This will be conducted by sending along the URL where the artist was redirected.
+-The artist after clicking the publish button should be redirected to the pixel-art page where a blank canvas with color palette will be displayed. 
+ This will be conducted by a console.log statement that prints the page where the artist was redirected.
 
--The artist should be able to navigate to the private canvas page and view the canvas that they recently published. 
-When the user clicks on the private gallery button, its corresponding URL should be sent to Chai 
-where it will be evaluated. Once the user is in the private gallery they should be able to locate the canvas they 
-recently published.
+-The artist should be able to click on any pixel in the canvas and it should change color. 
+ When the artist clicks on the up most pixel a client side console.log message will appear with the position and color of the newly colored pixel.
 
--The artist should be able to further edit the canvas that they recently published without changing the publicly displayed version. 
-The user should be able to click into the canvas they recently published and then change the color of the leftmost pixel on the canvas. 
-When this action is performed an emit broadcast should be sent which will be evaluated by an assert statement. 
-This assertion will validate that the appropriate canvas pixel was changed. 
-Then another assertion will compare the pixel on the published version to the pixel on the private version and verify 
-that they are different.
+-The artist should be able to add colors to the palette and then switch to another color by clicking on the color selector. 
+ They then will color a pixel with the color they selected on the color selector. 
+ Then they will click on the color they added to the palette. 
+ Afterwards they should be able to color another pixel the color they saved to the palette.
 
-UAT For User Session:
+UAT For artist Session:
 
--This test will be conducted on a localhost test environment with one user being simulated by one tab
+-This test will be conducted on a localhost test environment with one artist being simulated by one tab
 
--When a user is not logged in, if they try to enter an exclusive canvas with a code, they should be redirected to the home page. 
-This will be done by trying to render the exclusive canvas page by sending a post request with an associated exclusive canvas code. 
-Then the post request should perform validation of the user. After the validation fails, the post request should send the url that the user will be redirected to. 
-This page should be the login page.
+-When an artist is not logged in, if they try to enter an exclusive canvas with a code, they should be redirected to the login page. 
+ This will be done by trying to render the exclusive canvas page by sending a post request with an associated exclusive canvas code. 
+ Then the post request should perform validation of the artist. After the validation fails, the post request should render the login page.
 
--When a user is not logged in, the user will not be able to log out. If the user tries to log out of the application without ever being 
-logged in, the logout API should send a response with a 400 series error indicating that the client was not authenticated and therefore 
-was not able to log out. Afterwards the login page should be rendered.
+-When an artist is not logged in, the artist will not be able to log out. 
+ If the artist tries to log out of the application without ever being logged in, the logout API should send the artist to the login page. 
+ The artist will test this by entering the following url ‘http://localhost:3000/logout’.
 
--When a user is not logged in, they should be able to get to the public gallery. 
-This implies that when the user clicks(get request) on the public canvas button, a 302 status should be sent along with the URL 
-that they have been redirected to. This URL should be the same as the public canvas page.
+-When an artist is not logged in, they should be able to get to the register and login page. This implies that when the artist clicks(get request) on the register link under login, the artist should be redirected to the registration page.
+
+UAT for auto upload:
+
+-This test will be conducted on a cloud environment where our application is deployed with multiple artists on desktop computers.
+
+-One artist will login and enter an exclusive canvas named ‘auto’. This artist will then begin coloring the canvas in any way that they 
+ choose. Shortly after another artist will get on the application and login. They will then enter ‘auto’ as the code for the exclusive canvas. 
+ When the new canvas loads, the artist would see the canvas as ‘untitled artwork’. They then should be able to scroll down to see the coloring that the other artist has done.
+
+-Once both artists are on the same canvas, the artist that recently logged in should be able to color the canvas. 
+ Then the artist that started the canvas should be able to name the canvas whatever they want and then proceed to click off of the canvas. 
+ That same artist should then navigate to their private gallery and find the said artwork without a thumbnail(image). 
+ When they click on the name, they should be able to see the saved artwork.
+
+-The artist that recently logged on should also be able to click on the untitled artwork field and name the artwork to what they like. 
+ Then they should be able to click the Pixels logo. After they are directed to the home page, they should navigate to their private canvas where they should find the newly saved artwork without a thumbnail. 
+ After they click on the name of that artwork and are directed to /pixel-art, they should see the name they choose and after they scroll down, they should see the artwork which should be identical to the other artist's artwork.
+
+
