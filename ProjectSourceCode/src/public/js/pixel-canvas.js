@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             canvasData[row][col] = chosen_color;
             this.style.backgroundColor = chosen_color;
             this.style.borderColor = chosen_color;
-
+            console.log("Row: "+ row + " Column: "+ col +" Color: "+ chosen_color);
             socket.emit('update', row, col, chosen_color, canvasHeight, canvasWidth, this);
         });
     }
@@ -92,6 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {
         saveBtn.addEventListener('click', async() => {
+            console.log("--------------------------------------");
+            console.log(" "+artName+" ");
+            console.log("--------------------------------------");
             if (artName == '')
             {
                 try
@@ -109,6 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if(artName != '')
             {
+                console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                console.log(" "+artName+" ");
+                console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
                 const node = document.getElementById('canvas-container');
                 await htmlToImage.toPng(node, {canvasWidth: 200, canvasHeight: 200})
                 .then((dataURL) => {
@@ -126,10 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 .catch((err) => {
                     console.log(err);
                 });
-                if (artName == '')
-                {
-                    artName = document.getElementById('theName').value
-                }
                 alert("Saved");
                 await SaveArt();
             }

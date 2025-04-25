@@ -147,10 +147,10 @@ app.get('/pixel-art', async(req, res) => {
 
   if(req.session.user)
   {
-    console.log('Pixel art route accessed!');
+    console.log('Rendered: /pixel-art');
 
       console.dir(paletteHeight,paletteRows,canvasHeight,canvasRows)
-      res.render('./pages/pixel-art', {
+      res.status(200).render('./pages/pixel-art', {
       title: 'Pixel Art Creator',
       canvasRows: canvasRows,
       paletteRows: paletteRows,
@@ -312,6 +312,11 @@ app.post('/save_thumbnail', async(req, res) => {
     const checkForDuplicates = "select Count(*) from users left join users_to_artwork on users.username = users_to_artwork.username left join artwork on artwork = artwork.artwork_id where users.username = '"+req.session.user.username+"' AND artwork.artwork_name = '"+req.body.theName+"';";
     const countDuplicates = await db.any(checkForDuplicates);
     theCountOfSameNameArt = countDuplicates[0].count
+    if(req.session.artwork_id != -1 && theCountOfSameNameArt == 0)
+    {
+      req.session.artwork_id = -1;
+    }
+    console.log("artwork_id: "+ req.session.artwork_id + " theCountOfSameNameArt: "+ theCountOfSameNameArt);
   }
   catch(err)
   {
@@ -398,7 +403,7 @@ app.post("/canvas", async(req, res) => {
     //SETTING UP CANVAS
       if(req.session.user)
       {
-        console.log('Pixel art route accessed!');
+        console.log('Rendered: /pixel-art');
     
           console.dir(paletteHeight,paletteRows,canvasHeight,canvasRows)
           res.render('./pages/pixel-art', {
@@ -565,6 +570,8 @@ function roomOrganizer(socket,roomName)
 
 function designateRoom(socket,newRoom)
 {
+  console.log("Socket ID: "+ socket.id + " Is In Room:"+ newRoom);
+  console.log("User is updated");
   if(!socketsToRooms.has(newRoom)) //new room
   {
       socket.join(newRoom); //joining new room

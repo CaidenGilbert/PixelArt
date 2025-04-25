@@ -9,7 +9,16 @@ body {
     margin: 0;
     padding: 20px;
   }
-  
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, .5fr));
+    gap: 1rem;
+}
+  .grid-item {
+    border-radius: 2px;
+    position: relative;
+    aspect-ratio: 1/1;
+}
   button {
     padding: 8px 16px;
     margin: 0 5px;
