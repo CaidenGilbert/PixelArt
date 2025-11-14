@@ -27,7 +27,7 @@ const hbs = handlebars.create({
     partialsDir: __dirname + '/views/partials',
 });
 
-// database configuration
+// database configuration a
 const dbConfig = {
     host: 'db', // the database server
     port: 5432, // the database port
