@@ -29,8 +29,8 @@ const hbs = handlebars.create({
 
 // database configuration
 const dbConfig = {
-    host: process.env.POSTGRES_HOST, // the database server
-    port: process.env.POSTGRES_PORT, // the database port
+    host: 'db', // the database server
+    port: 5432, // the database port
     database: process.env.POSTGRES_DB, // the database name
     user: process.env.POSTGRES_USER, // the user account to connect with
     password: process.env.POSTGRES_PASSWORD, // the password of the user account
@@ -228,10 +228,13 @@ app.post("/register", async (req,res) => {
       res.status(400).render("./pages/register",{message:"Invalid Username"});
     }
   }
-  catch(err)
-  {
-    res.status(400).render("./pages/register",{message: "Username is not valid"});
-  }
+  catch(err) {
+  console.error("QUERY:", query);
+  console.error("ERROR:", err);
+  res.status(400).render("./pages/register",{message: "Username is not valid"});
+}
+
+
 
 });
 /**
