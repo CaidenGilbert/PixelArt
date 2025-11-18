@@ -14,4 +14,4 @@ If you want to get your hands dirty start docker and naviage into the ProjectSou
 ## Lets Test The Application
 To run automated tests on the application you must ensure that the command in the docker-compose file is set to npm test and run. Once that is set, build the docker image and the automated tests will run.
 ## The Deployed Version Can Be Found Here
-https://tinyurl.com/2p9mxh98
+https://pixels.ble.dev/ 
